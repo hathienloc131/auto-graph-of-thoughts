@@ -160,3 +160,4 @@ cython_debug/
 #.idea/
 
 configs/openai_key.py
+configs/lm_config.py

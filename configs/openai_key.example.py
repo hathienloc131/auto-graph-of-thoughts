@@ -1,1 +1,2 @@
-OPENAI_API_KEY = "api_key"
+OPENAI_API_KEY = ""
+ORGANIZATION_KEY = None
