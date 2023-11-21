@@ -32,7 +32,7 @@ class Drawer():
         elif operation_info["type"] == OperationType.generate:
             return Generate(operation_info["num_try"], operation_info["num_choice"])
         elif operation_info["type"] == OperationType.aggregate:
-            return Aggregate(operation_info["num_try"], operation_info["num_choice"])
+            return Aggregate(operation_info["num_try"])
         
 
 
