@@ -14,7 +14,7 @@ class Drawer():
 
         #pop start and end token
         sequence.pop(0)
-        sequence.pop(1)
+        sequence.pop(-1)
 
         for token in sequence:
             list_operation.append(self._idx2operation(token))
