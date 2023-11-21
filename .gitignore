@@ -161,3 +161,4 @@ cython_debug/
 
 configs/openai_key.py
 configs/lm_config.py
+configs/tokenizer_config.pu
