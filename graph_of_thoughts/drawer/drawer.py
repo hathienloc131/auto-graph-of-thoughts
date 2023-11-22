@@ -25,14 +25,7 @@ class Drawer():
     def _idx2operation(self, token: int) -> Operation:
         operation_info = self.tokenizer(token)
         assert operation_info is not None, "Token is not in the dictionary"
-        if operation_info["type"] == OperationType.split:
-            return Split(operation_info["num_try"])
-        elif operation_info["type"] == OperationType.improve:
-            return Improve(operation_info["num_try"], operation_info["num_choice"])
-        elif operation_info["type"] == OperationType.generate:
-            return Generate(operation_info["num_try"], operation_info["num_choice"])
-        elif operation_info["type"] == OperationType.aggregate:
-            return Aggregate(operation_info["num_try"])
+        return operation_info
         
 
 
