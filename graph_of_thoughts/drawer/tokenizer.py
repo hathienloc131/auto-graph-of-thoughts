@@ -25,7 +25,8 @@ class Tokenizer():
             if isinstance(key, OperationType):
                 list_choices = self._process_operation(key, value)
                 for choice in list_choices:
-                    dictionary[index] = {"type": key, "num_try": choice, "num_choice": 1}
+                    
+                    dictionary[index] = {"type": key, "num_split": choice} if key == OperationType.split else {"type": key, "num_try": choice, "num_choice": 1}
                     index += 1
             else:
                 print("Invalid operation type: {}".format(key))
