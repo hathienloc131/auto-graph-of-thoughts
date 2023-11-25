@@ -1,0 +1,15 @@
+// A Round Graph
+digraph {
+	a [label="SPLIT 2"]
+	b [label="GENERATE 3 1"]
+	a -> b
+	c [label="GENERATE 3 1"]
+	a -> c
+	d [label="IMPROVE 2 1"]
+	b -> d
+	e [label="IMPROVE 2 1"]
+	c -> e
+	f [label="AGGREGATE 9"]
+	d -> f
+	e -> f
+}

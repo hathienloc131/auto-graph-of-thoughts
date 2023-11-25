@@ -29,9 +29,8 @@ class Tokenizer():
                     dictionary[index] = {"type": key, "num_split": choice} if key == OperationType.split else {"type": key, "num_try": choice, "num_choice": 1}
                     index += 1
             else:
-                print("Invalid operation type: {}".format(key))
+                raise TypeError("Invalid operation type: {}".format(key))
         self.length = index
-        print(dictionary)
         return dictionary
     
     def _process_operation(self, operation_type: OperationType, config: Dict) -> List:

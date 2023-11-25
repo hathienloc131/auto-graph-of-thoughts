@@ -1,8 +1,21 @@
 # **Graph of Thoughs Generator**
 
 ## Configurations
+
+### Prerequisites and System Requirements
+- You must have [graphviz](https://graphviz.org) framework inside your system.
+    - Ubuntu:
+    ```zsh
+    sudo apt-get install graphviz
+    ```
+    - MacOS:
+    ```zsh
+    brew install graphviz
+    ```
+
 <p align="left">
  <a href=""><img src="https://img.shields.io/badge/python-3.9-aff.svg"></a>
+ <a href=""><img src="https://img.shields.io/badge/graphviz-fff.svg"></a>
 </p>
 
 ### Run locally

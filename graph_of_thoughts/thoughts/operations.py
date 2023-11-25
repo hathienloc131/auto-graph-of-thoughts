@@ -26,6 +26,7 @@ class Operation(ABC):
 
     _ids: Iterator[int] = itertools.count(0)
     operation_type: OperationType = None
+    operation_name: str = None
 
 
     def __init__(self) -> None:
@@ -80,6 +81,7 @@ class Split(Operation):
     Operation to split thoughts.
     """
     operation_type: OperationType = OperationType.split
+    operation_name: str = "SPLIT"
 
 
     def __init__(self, num_split:int = 2) -> None:
@@ -90,6 +92,8 @@ class Split(Operation):
             raise ValueError(f"num_split must greater than 1, but found {num_split}")
         
         self.num_split = num_split
+        
+        self.operation_name += f" {self.num_split}"
 
 
     def __repr__(self) -> str:
@@ -100,6 +104,7 @@ class Generate(Operation):
     Operation to generate thoughts.
     """
     operation_type: OperationType = OperationType.generate
+    operation_name: str = "GENERATE"
 
 
     def __init__(self, num_try:int = 1, num_choice:int = 1) -> None:
@@ -114,6 +119,8 @@ class Generate(Operation):
         self.num_try = num_try
         self.num_choice = num_choice
 
+        self.operation_name += f" {self.num_try} {self.num_choice}"
+
 
     def __repr__(self) -> str:
         return f"""Generate Operation\nID:{self.id}\nNo. Try: {self.num_try}\nNo. Choice: {self.num_choice};"""
@@ -123,26 +130,32 @@ class Improve(Generate):
     Operation to Improve thoughts.
     """
     operation_type: OperationType = OperationType.improve
+    operation_name: str = "IMPROVE"
 
 
     def __init__(self, num_try:int = 1, num_choice:int = 1) -> None:
-
         super().__init__(num_try, num_choice)
+
+    def __repr__(self) -> str:
+        return f"""Improve Operation\nID:{self.id}\nNo. Try: {self.num_try}\nNo. Choice: {self.num_choice};"""
     
 class Aggregate(Operation):
     """
     Operation to Aggregate thoughts.
     """
     operation_type: OperationType = OperationType.aggregate
+    operation_name: str = "AGGREGATE"
 
 
-    def __init__(self, num_response:int = 1) -> None:
+    def __init__(self, num_try:int = 1) -> None:
         super().__init__()
-        if num_response < 1:
-            raise ValueError(f"num_response must be positive")
+        if num_try < 1:
+            raise ValueError(f"num_try must be positive")
         
-        self.num_response = num_response
+        self.num_try = num_try
+
+        self.operation_name += f" {self.num_try}"
 
 
     def __repr__(self) -> str:
-        return f"""Aggregate Operation\nID:{self.id}\nNo. Response: {self.num_response};"""
+        return f"""Aggregate Operation\nID:{self.id}\nNo. Try: {self.num_try};"""
