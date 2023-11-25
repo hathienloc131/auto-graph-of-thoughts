@@ -2,6 +2,11 @@
 
 ## Configurations
 
+<p align="left">
+ <a href=""><img src="https://img.shields.io/badge/python-3.9-aff.svg"></a>
+ <a href=""><img src="https://img.shields.io/badge/graphviz-fff.svg"></a>
+</p>
+
 ### Prerequisites and System Requirements
 - You must have [graphviz](https://graphviz.org) framework inside your system.
     - Ubuntu:
@@ -12,11 +17,6 @@
     ```zsh
     brew install graphviz
     ```
-
-<p align="left">
- <a href=""><img src="https://img.shields.io/badge/python-3.9-aff.svg"></a>
- <a href=""><img src="https://img.shields.io/badge/graphviz-fff.svg"></a>
-</p>
 
 ### Run locally
 - Create conda environment, note that python version should be <span style="color:#9BB8ED;">Python 3.9</span>
