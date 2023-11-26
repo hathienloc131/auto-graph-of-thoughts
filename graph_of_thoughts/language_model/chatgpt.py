@@ -58,7 +58,7 @@ class ChatGPT(AbstractLanguageModel):
             raise ValueError("OPENAI_API_KEY is not set")
         self.client = OpenAI(api_key=OPENAI_API_KEY, organization=ORGANIZATION_KEY)
 
-    def query(self, query: str, num_responses: int = 1) -> Dict:
+    def query(self, query: str, num_responses: int = 1, problem_description: str = None) -> Dict:
         """
         Query the OpenAI model for responses.
 
@@ -69,11 +69,15 @@ class ChatGPT(AbstractLanguageModel):
         :return: Response(s) from the OpenAI model.
         :rtype: Dict
         """
+        message = [{"role": "user", "content": query}]
+        if problem_description is not None:
+            message.insert(0, {"role": "system", "content": problem_description})
+        
         if self.cache and query in self.respone_cache:
             return self.respone_cache[query]
 
         if num_responses == 1:
-            response = self.chat([{"role": "user", "content": query}], num_responses)
+            response = self.chat(message, num_responses)
         else:
             response = []
             next_try = num_responses
@@ -136,8 +140,9 @@ class ChatGPT(AbstractLanguageModel):
         :return: List of response strings.
         :rtype: List[str]
         """
-        if isinstance(query_response, Dict):
+        if isinstance(query_response, Dict) or isinstance(query_response, object):
             query_response = [query_response]
+        # print(query_response)
         return [
             choice.message.content
             for response in query_response

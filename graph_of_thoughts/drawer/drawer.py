@@ -12,10 +12,8 @@ class Drawer():
         list_operation = []
 
         #Pop start and end token
-        sequence.pop(0)
-        sequence.pop(-1)
 
-        for token in sequence:
+        for token in sequence[1:-1]:
             list_operation.append(self._idx2operation(token))
 
         return list_operation

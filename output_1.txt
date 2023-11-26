@@ -1,0 +1,27 @@
+Sort this list using merge sort algorithm [5,6,1,5,6,3,9,1,2,0,1,2,9,4,7,8]
+<Instruction>Split the list into 4 sub-lists of equal size. Only output the 4 results, seperate with \n without any addtional text or thoughts.</Instruction>
+Input: [5,6,1,5,6,3,9,1,2,0,1,2,9,4,7,8]
+Output: [5, 6, 1, 5]
+[6, 3, 9, 1]
+[2, 0, 1, 2]
+[9, 4, 7, 8]
+<Instruction>['Sort the sublist [5, 6, 1, 5] using the merge sort algorithm.'] Only output the result without any addtional text or thoughts.</Instruction>
+Input: [5, 6, 1, 5]
+Output: 
+[1, 5, 5, 6]
+<Instruction>['Sort the following list using the merge sort algorithm: [6, 3, 9, 1]'] Only output the result without any addtional text or thoughts.</Instruction>
+Input: [6, 3, 9, 1]
+Output: 
+[1, 3, 6, 9]
+<Instruction>['Sort the given list [5,6,1,5,6,3,9,1,2,0,1,2,9,4,7,8] using the merge sort algorithm.'] Only output the result without any addtional text or thoughts.</Instruction>
+Input: [2, 0, 1, 2]
+Output: 
+[0, 1, 2, 2]
+<Instruction>['Sort the list [9, 4, 7, 8] using the merge sort algorithm.'] Only output the result without any addtional text or thoughts.</Instruction>
+Input: [9, 4, 7, 8]
+Output: 
+[4, 7, 8, 9]
+<Instruction>['Aggregate all the results from the sub-task into the main task based on the output of the previous state given by the user. Just generate only the aggregate prompt.\n\nSort the given list [5, 6, 1, 5] using the merge sort algorithm.\n\nSort the following list using the merge sort algorithm: [6, 3, 9, 1].\n\nSort the given list [5, 6, 1, 5, 6, 3, 9, 1, 2, 0, 1, 2, 9, 4, 7, 8] using the merge sort algorithm.\n\nSort the list [9, 4, 7, 8] using the merge sort algorithm.\n\nAggregate the results: [1, 5, 5, 6], [1, 3, 6, 9], [0, 1, 2, 2], [4, 7, 8, 9].'] Only output the result without any addtional text or thoughts.</Instruction>
+Input: [1, 5, 5, 6],[1, 3, 6, 9],[0, 1, 2, 2],[4, 7, 8, 9],
+Output: 
+[0, 1, 1, 2, 2, 3, 4, 5, 5, 6, 6, 7, 8, 9, 9]

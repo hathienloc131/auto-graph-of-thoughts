@@ -45,7 +45,7 @@ class AbstractLanguageModel(ABC):
         self.respone_cache.clear()
 
     @abstractmethod
-    def query(self, query: str, num_responses: int = 1) -> Any:
+    def query(self, query: str, num_responses: int = 1, problem_description: str = None) -> Any:
         """
         Abstract method to query the language model.
 
