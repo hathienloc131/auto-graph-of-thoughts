@@ -1,0 +1,1 @@
+split_prompt = f"<Instruction>{split_prompt_raw} \nOnly output the {state.num_split} results in format {{\"0\":..., \"1\": ...}} without any addtional text or thoughts.</Instruction>\nInput: {state.input}\nOutput:"

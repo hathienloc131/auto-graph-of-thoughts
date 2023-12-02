@@ -10,19 +10,33 @@ class LanguageModelPrompter():
         self.problem_description = problem_description
 
     def split_prompt(self, state_dicts: List[Dict], **kwargs) -> str:
-        system_prompt = "You are responsible for generate a split prompt that split the current task into {} exactly same sub-tasks based on the previous state given by user. Just generate only split prompt.".format(state_dicts['num_split'])
-        query = f"""Previous state: {state_dicts["state"]}\Split Prompt: """
+        system_prompt = """You are helpful prompt engineer. Do not solve the previous task directly or mention the previous task, just generate only split prompt."""
+        query = f"""
+        <Description>Generate a split prompt that will divide the previous task into exactly same {state_dicts['num_split']} part.</Description>
+        Previous Task: {state_dicts["state"]}
+        Split Prompt: """
+        split_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.problem_description + system_prompt))[0]
 
-        return self.lm.get_response_texts(self.lm.query(query, 1, self.problem_description + system_prompt))
+        return split_prompt_raw
     
     def generate_prompt(self, state_dicts: List[Dict], **kwargs) -> str:
-        system_prompt = "You are responsible for generate a prompt that perform the next task that solve the problem based on the output of the previous state given by user. Just generate only the prompt."
-        query = f"""Previous state: {state_dicts["state"]}\Generate Prompt: """
+        system_prompt = """You are helpful prompt engineer. Do not solve the previous task directly or mention the previous task, just generate only the prompt."""
+        query = f"""
+        <Description>Generate a prompt that will perform the a next task after doing previous task.</Description>
+        Previous Task: {state_dicts["state"]}
+        Prompt: """
+        generate_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.problem_description + system_prompt))[0]
 
-        return self.lm.get_response_texts(self.lm.query(query, 1, self.problem_description + system_prompt))
+
+        return generate_prompt_raw
     
     def aggregate_prompt(self, state_dicts: List[Dict], **kwargs) -> str:
-        system_prompt = "You are responsible for generate aggregate prompt that aggregate all the results from the sub-task into main task based on the output of the previous state given by user. Just generate only the aggregate prompt."
-        query = f"""Previous state: {state_dicts["state"]}\Aggregate Prompt: """
+        system_prompt = "You are helpful prompt engineer. Do not solve the previous task directly or mention the previous task,, just generate only the aggregate prompt."
+        query = f"""
+        <Description>Generate a prompt that aggregate all results from the previous task into the main task.</Description>
+        Previous Task: {state_dicts["state"]}
+        Aggregate Prompt: """
+        aggregate_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.problem_description + system_prompt))[0]
 
-        return self.lm.get_response_texts(self.lm.query(query, 1, self.problem_description + system_prompt))
+
+        return  aggregate_prompt_raw
