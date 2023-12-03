@@ -38,9 +38,9 @@ class GraphOfOperations:
     def append_operation(self, operation: Operation) -> None:
         """
         Appends an operation to all leaves in the graph and updates the relationships.
-
-        :param operation: The operation to append.
-        :type operation: Operation
+        
+        `Input`:
+        - operation: `<Operation>` The operation to append.
         """
         self.operations.append(operation)
         if self.is_visualize == True:
@@ -62,8 +62,8 @@ class GraphOfOperations:
         Add an operation to the graph considering its predecessors and successors.
         Adjust roots and leaves based on the added operation's position within the graph.
 
-        :param operation: The operation to add.
-        :type operation: Operation
+        `Input`:
+        - operation: `<Operation>` The operation to append.
         """
         self.operations.append(operation)
         if self.is_visualize == True:

@@ -1,5 +1,5 @@
 from typing import Dict, List
-from graph_of_thoughts.thoughts import GraphOfOperations, OperationFactory, OperationType, Operation, Split, Generate, Improve, Aggregate
+from graph_of_thoughts.thoughts import GraphOfOperations, OperationFactory, OperationType, Operation, Split
 from .tokenizer import Tokenizer
 
 class Drawer():

@@ -6,6 +6,9 @@ from abc import ABC, abstractmethod
 import itertools
 
 from graph_of_thoughts.thoughts.thought import Thought
+from graph_of_thoughts.language_model import AbstractLanguageModel
+from graph_of_thoughts.prompter import Prompter
+from graph_of_thoughts.parser import Parser
 
 
 class OperationType(Enum):
@@ -30,10 +33,14 @@ class Operation(ABC):
 
 
     def __init__(self) -> None:
+        self.logger: logging.Logger = logging.getLogger(self.__class__.__name__)
+
         self.id: int = next(Operation._ids)
         self.predecessors: List[Operation] = []
         self.successors: List[Operation] = []
         self.executed: bool = False
+
+        self.thoughts: List[Thought] = []
 
 
     def can_be_executed(self) -> bool:
@@ -72,9 +79,6 @@ class Operation(ABC):
     def _execute(self, **kwargs) -> None:
         print(self)
 
-    # @abstractmethod
-    # def get_thoughts(self) -> List[Thought]:
-    #     pass
 
 class Split(Operation):
     """
@@ -99,6 +103,7 @@ class Split(Operation):
     def __repr__(self) -> str:
         return f"""Split Operation\nID:{self.id}\nNo. Split: {self.num_split};"""
     
+
 class Generate(Operation):
     """
     Operation to generate thoughts.
@@ -125,6 +130,7 @@ class Generate(Operation):
     def __repr__(self) -> str:
         return f"""Generate Operation\nID:{self.id}\nNo. Try: {self.num_try}\nNo. Choice: {self.num_choice};"""
     
+
 class Improve(Generate):
     """
     Operation to Improve thoughts.
@@ -136,9 +142,11 @@ class Improve(Generate):
     def __init__(self, num_try:int = 1, num_choice:int = 1) -> None:
         super().__init__(num_try, num_choice)
 
+
     def __repr__(self) -> str:
         return f"""Improve Operation\nID:{self.id}\nNo. Try: {self.num_try}\nNo. Choice: {self.num_choice};"""
     
+
 class Aggregate(Operation):
     """
     Operation to Aggregate thoughts.

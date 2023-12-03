@@ -1,5 +1,6 @@
 from graph_of_thoughts.drawer import Tokenizer, Drawer
-if __name__ == '__main__':
+    
+def run():
     tokenizer = Tokenizer()
     drawer = Drawer(tokenizer)
     START_TOKEN = tokenizer(0)

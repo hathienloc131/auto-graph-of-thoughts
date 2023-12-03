@@ -21,12 +21,10 @@ class AbstractLanguageModel(ABC):
         """
         Initialize the AbstractLanguageModel instance with configuration, model details, and caching options.
 
-        :param config_path: Path to the config file. Defaults to "".
-        :type config_path: str
-        :param model_name: Name of the language model. Defaults to "".
-        :type model_name: str
-        :param cache: Flag to determine whether to cache responses. Defaults to False.
-        :type cache: bool
+        `Input`:
+        - config_path: `<str>` Path to the config file. Defaults to "".
+        - model_name: `<str>` Name of the language model. Defaults to "".
+        - cache: `<str>` Flag to determine whether to cache responses. Defaults to False.
         """
         self.model_name: str = model_name
         self.config: Dict = LM_CONFIG
@@ -49,12 +47,12 @@ class AbstractLanguageModel(ABC):
         """
         Abstract method to query the language model.
 
-        :param query: The query to be posed to the language model.
-        :type query: str
-        :param num_responses: The number of desired responses.
-        :type num_responses: int
-        :return: The language model's response(s).
-        :rtype: Any
+        `Input`:
+        - query: `<str>` The query to be posed to the language model.
+        - num_responses: `<int>` The number of desired responses.
+        
+        `Output`:
+        - `<Any>` The language model's response(s).
         """
         pass
 
@@ -63,9 +61,11 @@ class AbstractLanguageModel(ABC):
         """
         Abstract method to extract response texts from the language model's response(s).
 
-        :param query_responses: The responses returned from the language model.
-        :type query_responses: Union[List[Dict], Dict]
-        :return: List of textual responses.
-        :rtype: List[str]
+        `Input`:
+
+        - query_responses: `<Union[List[Dict], Dict]>` The responses returned from the language model.
+
+        `Output`:
+        - `<List[str]>` List of textual responses.
         """
         pass
