@@ -9,7 +9,7 @@ class LanguageModelPrompter():
         self.lm = lm
         self.problem_description = problem_description
 
-    def split_prompt(self, state_dicts: List[Dict], **kwargs) -> str:
+    def split_prompt(self, state_dicts: Dict, **kwargs) -> str:
         system_prompt = """You are helpful prompt engineer. Do not solve the previous task directly or mention the previous task, just generate only split prompt."""
         query = f"""
         <Description>Generate a split prompt that will divide the previous task into exactly same {state_dicts['num_split']} part.</Description>
@@ -19,7 +19,7 @@ class LanguageModelPrompter():
 
         return split_prompt_raw
     
-    def generate_prompt(self, state_dicts: List[Dict], **kwargs) -> str:
+    def generate_prompt(self, state_dicts: Dict, **kwargs) -> str:
         system_prompt = """You are helpful prompt engineer. Do not solve the previous task directly or mention the previous task, just generate only the prompt."""
         query = f"""
         <Description>Generate a prompt that will perform the a next task after doing previous task.</Description>
@@ -30,7 +30,7 @@ class LanguageModelPrompter():
 
         return generate_prompt_raw
     
-    def aggregate_prompt(self, state_dicts: List[Dict], **kwargs) -> str:
+    def aggregate_prompt(self, state_dicts: Dict, **kwargs) -> str:
         system_prompt = "You are helpful prompt engineer. Do not solve the previous task directly or mention the previous task,, just generate only the aggregate prompt."
         query = f"""
         <Description>Generate a prompt that aggregate all results from the previous task into the main task.</Description>
