@@ -33,35 +33,37 @@ class Drawer():
         decoded_operations = self.decode(sequence)
 
         graph = GraphOfOperations(is_visualize=is_visualize)
-        for operation in decoded_operations:
-            if len(graph.roots) == 0 or operation["type"] == OperationType.aggregate:
-                graph.append_operation(self.operation_factory.create_operation(**operation))
+        for operation_info in decoded_operations:
+            if len(graph.roots) == 0 or operation_info["type"] == OperationType.aggregate:
+                graph.append_operation(self.operation_factory.create_operation(**operation_info))
 
                 continue
             
-            #Waitlist of Thoughts
-            wait_thoughts: List[Operation] = []
+            #Waitlist of Operation
+            wait_oprs: List[Operation] = []
 
 
             for i in range(len(graph.leaves)):
                 if graph.leaves[i].operation_type == OperationType.split:
                     split_node: Split = graph.leaves[i]
-                    for _ in range(split_node.num_split):
-                        thought = self.operation_factory.create_operation(**operation)
-                        thought.add_predecessor(split_node)
+                    
+                    for j in range(split_node.num_split):
+                        operation_info["part"] = j
+                        opr = self.operation_factory.create_operation(**operation_info)
+                        opr.add_predecessor(split_node)
 
-                        #Add this Thought into Waitlist
-                        wait_thoughts.append(thought)
+                        #Add this Operation into Waitlist
+                        wait_oprs.append(opr)
                 else:
-                    thought = self.operation_factory.create_operation(**operation)
-                    thought.add_predecessor(graph.leaves[i])
+                    opr = self.operation_factory.create_operation(**operation_info)
+                    opr.add_predecessor(graph.leaves[i])
 
-                    #Add this Thought into Waitlist
-                    wait_thoughts.append(thought)
+                    #Add this Operation into Waitlist
+                    wait_oprs.append(opr)
             
             #Add Thought into Graph
-            for i in range(len(wait_thoughts)):
-                graph.add_operation(wait_thoughts[i])
+            for i in range(len(wait_oprs)):
+                graph.add_operation(wait_oprs[i])
         
         return graph
 
