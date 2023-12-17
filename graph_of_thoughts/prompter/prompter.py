@@ -18,7 +18,7 @@ class Prompter(ABC):
     """
 
     @abstractmethod
-    def aggregation_prompt(self, state_dicts: Dict, **kwargs) -> str:
+    def aggregate_prompt(self, state_dicts: Dict, **kwargs) -> str:
         """
         Generate a aggregation prompt for the language model.
         """
