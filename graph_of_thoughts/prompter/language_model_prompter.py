@@ -9,13 +9,13 @@ class LanguageModelPrompter():
         self.lm = lm
         self.problem_description = problem_description
         self.system_prompt = system_prompt
-        self.json_prompt = f' in format json {{"0":}} ' if json_format else ' '
+        self.json_prompt = f' in json format with index, example {{"0":...,"1":...}}' if json_format else ', each answer in |answer| and seperated by \\t '
 
     def split_prompt(self, state_dicts: Dict, **kwargs) -> str:
         query = f"""<Description>Give me a single STEP to divide the CURRENT TASK into exactly equal NUMBER OF SUBTASKS.</Description>\nCURRENT TASK: {state_dicts["state"]}\nNUMBER OF SUBTASKS: {state_dicts["num_split"]}\nSTEP:"""
         split_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.problem_description + self.system_prompt))[0]
 
-        split_prompt = f"""<Instruction>{split_prompt_raw} \nOnly answer the {state_dicts['num_split']} results in format json {{\"0\":..., \"1\": ...}} without any addtional text or thoughts.</Instruction>\nInput: {state_dicts["current"]}\nAnswer:"""
+        split_prompt = f"""<Instruction>{split_prompt_raw} \nAnswer each subtask seperately{self.json_prompt}without any addtional text or thoughts.</Instruction>\nInput: {state_dicts["current"]}\nAnswer:"""
 
         return split_prompt
     
