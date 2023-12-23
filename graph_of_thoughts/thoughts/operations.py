@@ -33,7 +33,6 @@ class Operation(ABC):
 
 
     def __init__(self) -> None:
-        self.logger: logging.Logger = logging.getLogger(self.__class__.__name__)
 
         self.id: int = next(Operation._ids)
         self.predecessors: List[Operation] = []
@@ -119,12 +118,11 @@ class Operation(ABC):
         - `AssertionError`: If not all predecessors have been executed.
         """
 
-        assert self.can_be_executed(), "Not all predecessors have been executed"
-        self.logger.info(
+        assert (
+            self.can_be_executed(), "Not all predecessors have been executed"
             "Executing operation %d of type %s", self.id, self.operation_type
         )
         self._execute(lm, prompter, parser, **kwargs)
-        self.logger.debug("Operation %d executed", self.id)
         print(self.__repr__())
         for t in self.thoughts:
             print("\t", t.state)
@@ -203,25 +201,17 @@ class Split(Operation):
             base_state = thought.state
             generate_prompt = prompter.split_prompt({**base_state, **self.__dict__}, **kwargs)
 
-            self.logger.debug("Prompt for LM: %s", generate_prompt)
+
             responses = None
             # responses = lm.get_response_texts(
             #     lm.query(generate_prompt, num_responses=self.num_try)
             # )
-            self.logger.debug("Responses from LM: %s", responses)
+
             for new_state in parser.parse_split_answer(self.__dict__, base_state, responses):
                 new_state = {**base_state, **new_state}
                 self.thoughts.append(Thought(new_state))
-        if (
-            len(self.thoughts) > self.num_split
-        ):
-            self.logger.warning(
-                "Split operation %d created more thoughts than expected",
-                self.id,
-            )
-        self.logger.info(
-            "Split operation %d created %d new thoughts", self.id, len(self.thoughts)
-        )
+        if (len(self.thoughts) > self.num_split):
+            raise Exception("LM returns more thoughts than expected.")
 
 
     def __repr__(self) -> str:
@@ -283,30 +273,17 @@ class Generate(Operation):
             base_state = thought.state
             generate_prompt = prompter.generate_prompt(base_state, **kwargs)
 
-            self.logger.debug("Prompt for LM: %s", generate_prompt)
+
             responses = None
             # responses = lm.get_response_texts(
             #     lm.query(generate_prompt, num_responses=self.num_try)
             # )
-            self.logger.debug("Responses from LM: %s", responses)
+
             for new_state in parser.parse_generate_answer(self.__dict__, base_state, responses):
                 new_state = {**base_state, **new_state}
                 self.thoughts.append(Thought(new_state))
-                self.logger.debug(
-                    "New thought %d created with state %s",
-                    self.thoughts[-1].id,
-                    self.thoughts[-1].state,
-                )
-        if (
-            len(self.thoughts) > self.num_try * len(previous_thoughts)
-        ):
-            self.logger.warning(
-                "Generate operation %d created more thoughts than expected",
-                self.id,
-            )
-        self.logger.info(
-            "Generate operation %d created %d new thoughts", self.id, len(self.thoughts)
-        )
+        if (len(self.thoughts) > self.num_try * len(previous_thoughts)):
+            raise Exception(f"Generate operation {self.id} created more thoughts than expected")
 
 
     def __repr__(self) -> str:
@@ -384,13 +361,10 @@ class Aggregate(Operation):
         previous_thought_states = [thought.state for thought in previous_thoughts]
         prompt = prompter.aggregate_prompt(previous_thought_states)
 
-        self.logger.debug("Prompt for LM: %s", prompt)
         responses = None
         # responses = lm.get_response_texts(
         #     lm.query(prompt, num_responses=self.num_responses)
         # )
-
-        self.logger.debug("Responses from LM: %s", responses)
 
         parsed = parser.parse_aggregate_answer(previous_thought_states, responses, "")
 
