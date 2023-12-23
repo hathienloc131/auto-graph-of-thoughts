@@ -42,3 +42,21 @@ class Prompter(ABC):
         and concrete implementations to specify required arguments explicitly.
         """
         pass
+
+    @abstractmethod
+    def improve_prompt(self, state_dicts: Dict, **kwargs) -> str:
+        """
+        Generate a improve prompt for the language model.
+        The thought state is unpacked to allow for additional keyword arguments
+        and concrete implementations to specify required arguments explicitly.
+        """
+        pass
+
+    @abstractmethod
+    def score_prompt(self, state_dicts: Dict, **kwargs) -> str:
+        """
+        Generate a score prompt for the language model.
+        The thought state is unpacked to allow for additional keyword arguments
+        and concrete implementations to specify required arguments explicitly.
+        """
+        pass
