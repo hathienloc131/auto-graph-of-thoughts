@@ -12,23 +12,24 @@ class LanguageModelPrompter():
         self.json_prompt = f' in json format with index, example {{"0":...,"1":...}}' if json_format else ', each answer in |answer| and seperated by \\t '
 
     def split_prompt(self, state_dicts: Dict, **kwargs) -> str:
-        query = f"""<Description>Give me a single STEP to divide the CURRENT TASK into exactly equal NUMBER OF SUBTASKS.</Description>\nCURRENT TASK: {state_dicts["state"]}\nNUMBER OF SUBTASKS: {state_dicts["num_split"]}\nSTEP:"""
-        split_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.problem_description + self.system_prompt))[0]
+        query = f"""<Description>Please give me a single NEXT STEP to divide the CURRENT STEP into exactly {state_dicts["num_split"]} subtasks to solve the MAIN TASK.</Description>\nMAIN TASK: {self.problem_description}\nCURRENT STEP: {state_dicts["state"]}\nNEXT STEP:"""
+        split_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1))[0]
 
         split_prompt = f"""<Instruction>{split_prompt_raw} \nAnswer each subtask seperately{self.json_prompt}without any addtional text or thoughts.</Instruction>\nInput: {state_dicts["current"]}\nAnswer:"""
 
         return split_prompt
     
     def generate_prompt(self, state_dicts: Dict, **kwargs) -> str:
-        query = f"""<Description>Give me a single STEP to perform the next task after doing CURRENT TASK.</Description>\nCURRENT TASK: {state_dicts["state"]}\nSTEP:"""
-        generate_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.problem_description + self.system_prompt))[0]
+        query = f"""<Description>Please give me the NEXT STEP to solve the MAIN TASK after completing the CURRENT STEP.</Description>\nMAIN TASK: {self.problem_description}\nCURRENT STEP: {state_dicts["state"]}\nNEXT STEP:"""
+        generate_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1))[0]
+        
         generate_prompt = f"""<Instruction>{generate_prompt_raw} \nOnly answer the result{self.json_prompt}without any addtional text or thoughts.</Instruction>\nInput: {state_dicts["current"]}\nAnswer:"""
 
         return generate_prompt
     
     def aggregate_prompt(self, state_dicts: Dict, **kwargs) -> str:
-        query = f"""<Description>Give me a single STEP to aggregate or combine into final result by using all results from CURRENT TASK.</Description>\nCURRENT TASK: {state_dicts["state"]}\nSTEP:"""
-        aggregate_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.problem_description +  self.system_prompt))[0]
+        query = f"""<Description>Please give me a single NEXT STEP to aggregate or combine into FINAL RESULT to solve the MAIN TASK by using all results from CURRENT STEPS.</Description>\nMAIN TASK: {self.problem_description}\nCURRENT STEPS: {state_dicts["state"]}\nFINAL RESULT:"""
+        aggregate_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1))[0]
 
         aggregate_prompt = f"""<Instruction>{aggregate_prompt_raw} \nOnly answer the result{self.json_prompt}without any addtional text or thoughts.</Instruction>\nInput: {state_dicts["current"]}\nAnswer:"""
 
@@ -38,7 +39,7 @@ class LanguageModelPrompter():
    
     def improve_prompt(self, state_dicts: Dict, **kwargs) -> str:
         query = f"""<Description>Give me a single STEP to improve the result from the CURRENT TASK by checking for errors and correct them if it exists.</Description>\nCURRENT TASK: {state_dicts["state"]}\nSTEP:"""
-        improve_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.problem_description + self.system_prompt))[0]
+        improve_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1))[0]
 
         improve_prompt = f"""<Instruction>{improve_prompt_raw} \nOnly answer the result{self.json_prompt}without any addtional text or thoughts. If nothing is wrong, return the original input. </Instruction>\nInput: {state_dicts["current"]}\nAnswer:"""
 
