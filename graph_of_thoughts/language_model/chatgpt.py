@@ -58,7 +58,9 @@ class ChatGPT(AbstractLanguageModel):
             raise ValueError("OPENAI_API_KEY is not set")
         self.client = OpenAI(api_key=OPENAI_API_KEY, organization=ORGANIZATION_KEY)
 
-    def query(self, query: str, num_responses: int = 1, problem_description: str = None) -> Dict:
+        self.system_prompt = """You goal is performing exactly what the INSTRUCTION of user describes to turn INPUT into appropriate OUTPUT given the PROBLEM . \n You cannot solve the PROBLEM immediately, you just use PROBLEM to extract necessary information to turn INPUT into OUTPUT. \n if INPUT is START, it mean that you must use INPUT in PROBLEM \n Only answering each OUTPUT exactly in this format: \n - Start with exactly "<S>" tag, inside is the result of output and end with exactly "</S>" tag. \n - The number of line equal to the number of OUTPUT. \n Example: \n <S>output 1</S> \n <S>output 2</S> \n <S>output 3</S> \n...\n <S>output i</S>"""
+
+    def query(self, query: str, num_responses: int = 1, system_prompt: str = None) -> Dict:
         """
         Query the OpenAI model for responses.
 
@@ -70,9 +72,11 @@ class ChatGPT(AbstractLanguageModel):
         :rtype: Dict
         """
         message = [{"role": "user", "content": query}]
-        if problem_description is not None:
-            message.insert(0, {"role": "system", "content": problem_description})
-        
+        if system_prompt is not None:
+            message.insert(0, {"role": "system", "content": system_prompt})
+        else:
+            message.insert(0, {"role": "system", "content": self.system_prompt})
+
         if self.cache and query in self.respone_cache:
             return self.respone_cache[query]
 
