@@ -10,14 +10,14 @@ class Prompter(ABC):
     """
 
     @abstractmethod
-    def aggregate_prompt(self, state_dicts: Dict, **kwargs) -> str:
+    def aggregate_prompt(self, state_dicts: Dict, **kwargs) -> tuple[str, str]:
         """
         Generate a aggregation prompt for the language model.
         """
         pass
 
     @abstractmethod
-    def improve_prompt(self, state_dicts: Dict, **kwargs) -> str:
+    def improve_prompt(self, state_dicts: Dict, **kwargs) -> tuple[str, str]:
         """
         Generate an improve prompt for the language model.
         The thought state is unpacked to allow for additional keyword arguments
@@ -26,7 +26,7 @@ class Prompter(ABC):
         pass
 
     @abstractmethod
-    def generate_prompt(self, state_dicts: Dict, **kwargs) -> str:
+    def generate_prompt(self, state_dicts: Dict, **kwargs) -> tuple[str, str]:
         """
         Generate a generate prompt for the language model.
         The thought state is unpacked to allow for additional keyword arguments
@@ -35,7 +35,7 @@ class Prompter(ABC):
         pass
 
     @abstractmethod
-    def split_prompt(self, state_dicts: Dict, **kwargs) -> str:
+    def split_prompt(self, state_dicts: Dict, **kwargs) -> tuple[str, str]:
         """
         Generate a split prompt for the language model.
         The thought state is unpacked to allow for additional keyword arguments
@@ -44,7 +44,7 @@ class Prompter(ABC):
         pass
 
     @abstractmethod
-    def improve_prompt(self, state_dicts: Dict, **kwargs) -> str:
+    def improve_prompt(self, state_dicts: Dict, **kwargs) -> tuple[str, str]:
         """
         Generate a improve prompt for the language model.
         The thought state is unpacked to allow for additional keyword arguments
@@ -53,7 +53,7 @@ class Prompter(ABC):
         pass
 
     @abstractmethod
-    def score_prompt(self, state_dicts: Dict, **kwargs) -> str:
+    def score_prompt(self, state_dicts: Dict, **kwargs) -> tuple[str, str]:
         """
         Generate a score prompt for the language model.
         The thought state is unpacked to allow for additional keyword arguments

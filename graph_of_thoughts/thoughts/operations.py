@@ -199,17 +199,16 @@ class Split(Operation):
 
         for thought in previous_thoughts:
             base_state = thought.state
-            generate_prompt = prompter.split_prompt({**base_state, **self.__dict__}, **kwargs)
+            split_state, split_prompt = prompter.split_prompt({**base_state, **self.__dict__}, **kwargs)
 
-
-            responses = None
-            # responses = lm.get_response_texts(
-            #     lm.query(generate_prompt, num_responses=self.num_try)
-            # )
+            responses = lm.get_response_texts(
+                lm.query(split_prompt)
+            )
 
             for new_state in parser.parse_split_answer(self.__dict__, base_state, responses):
-                new_state = {**base_state, **new_state}
+                new_state["state"] = split_state
                 self.thoughts.append(Thought(new_state))
+
         if (len(self.thoughts) > self.num_split):
             raise Exception("LM returns more thoughts than expected.")
 
@@ -271,16 +270,14 @@ class Generate(Operation):
 
         for thought in previous_thoughts:
             base_state = thought.state
-            generate_prompt = prompter.generate_prompt(base_state, **kwargs)
+            generate_state, generate_prompt = prompter.generate_prompt(base_state, **kwargs)
 
-
-            responses = None
-            # responses = lm.get_response_texts(
-            #     lm.query(generate_prompt, num_responses=self.num_try)
-            # )
+            responses = lm.get_response_texts(
+                lm.query(generate_prompt, num_responses=self.num_try)
+            )
 
             for new_state in parser.parse_generate_answer(self.__dict__, base_state, responses):
-                new_state = {**base_state, **new_state}
+                new_state["state"] = generate_state
                 self.thoughts.append(Thought(new_state))
         if (len(self.thoughts) > self.num_try * len(previous_thoughts)):
             raise Exception(f"Generate operation {self.id} created more thoughts than expected")
@@ -354,24 +351,25 @@ class Aggregate(Operation):
             return
 
         # applied in order of score
-        base_state: Dict = {}
-        for thought in sorted(previous_thoughts, key=lambda thought: thought.score):
-            base_state = {**base_state, **thought.state}
+        base_state: Dict = {
+            "state": [],
+            "current": [],
+        }
 
-        previous_thought_states = [thought.state for thought in previous_thoughts]
-        prompt = prompter.aggregate_prompt(previous_thought_states)
+        for thought in previous_thoughts:
+            base_state["state"].append(thought.state["state"])
+            base_state["current"].append(thought.state["current"])
 
-        responses = None
-        # responses = lm.get_response_texts(
-        #     lm.query(prompt, num_responses=self.num_responses)
-        # )
 
-        parsed = parser.parse_aggregate_answer(previous_thought_states, responses, "")
+        aggregate_state, aggregate_prompt = prompter.aggregate_prompt(base_state, **kwargs)
 
-        if isinstance(parsed, dict):
-            parsed = [parsed]
-        for new_state in parsed:
-            self.thoughts.append(Thought({**base_state, **new_state}))
+        responses = lm.get_response_texts(
+            lm.query(aggregate_prompt, num_responses=self.num_try)
+        )
+
+        for new_state in parser.parse_generate_answer(self.__dict__, base_state, responses):
+                new_state["state"] = aggregate_state
+                self.thoughts.append(Thought(new_state))
 
 
     def __repr__(self) -> str:

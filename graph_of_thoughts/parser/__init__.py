@@ -1,2 +1,2 @@
 from .parser import Parser
-from .sorting_parser import SortingParser
+from .current_parser import SortingParser

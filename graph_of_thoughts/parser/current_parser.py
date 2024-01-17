@@ -26,25 +26,26 @@ class SortingParser(Parser):
         - `AssertionError`: If states don't have enough response.
         """
         new_states = []
-        for text in texts:
-            # We expect a json which contains the four lists named "List 1" to "List 4"
-            # cut everything until the opening bracket and everything after the closing bracket
-            try:
-                text = text[text.index("{") : text.index("}") + 1]
-                json_dict = json.loads(text)
-                
-                for key, value in json_dict.items():
-                    if not isinstance(value, list):
-                        value = utils.string_to_list(value)
-                    new_state = state.copy()
-                    new_state["previous"] = new_state["current"]
-                    new_state["current"] = str(value)
-                    new_state["part"] = int(key)
-                    new_states.append(new_state)
-            except Exception as e:
-                raise Exception(f"Could not parse step answer: {text}. Encountered exception: {e}")
-        return new_states
+        text = texts[0]
+        text = text[text.index("<S>") : ].replace("</S>\n", "").replace("</S>", "")
+        # We expect a json which contains the four lists named "<S>" and end with "<\S>"
+        # cut everything until the opening bracket and everything after the closing bracket
+        try:
+
+            _texts = text.split("<S>")[1:]
+            
+            for part, ans in enumerate(_texts):
+                new_state = state.copy()
+                new_state["previous"] = new_state["current"]
+                new_state["current"] = ans
+                new_state["part"] = int(part)
+                new_states.append(new_state)
+            
+            return new_states
+        except Exception as e:
+            raise Exception(f"Could not parse step answer: {text}. Encountered exception: {e}")
         
+    
 
     def parse_generate_answer(self, gen_config: Dict, state: Dict, texts: List[str]) -> List[Dict]:
         """
@@ -61,6 +62,20 @@ class SortingParser(Parser):
         `Raises`:
         - `AssertionError`: If states don't have enough response.
         """
+        new_states = []
+        for text in texts:
+            # We expect a json which contains the four lists named "List 1" to "List 4"
+            # cut everything until the opening bracket and everything after the closing bracket
+            try:
+                text = text[text.index("<S>") : text.index("</S>")].replace("<S>", "")
+    
+                new_state = state.copy()
+                new_state["previous"] = new_state["current"]
+                new_state["current"] = text
+                new_states.append(new_state)
+            except Exception as e:
+                raise Exception(f"Could not parse step answer: {text}. Encountered exception: {e}")
+        return new_states
     
 
     def parse_aggregate_answer(self, agg_config: Dict, states: List[Dict], texts: List[str]) -> Union[Dict, List[Dict]]:
