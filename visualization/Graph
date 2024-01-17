@@ -1,53 +1,17 @@
 // A Round Graph
 digraph {
-	a [label="SPLIT 2"]
-	b [label="GENERATE 3 1"]
+	a [label="SPLIT 4"]
+	b [label="GENERATE 1 1"]
 	a -> b
-	c [label="GENERATE 3 1"]
+	c [label="GENERATE 1 1"]
 	a -> c
-	d [label="SPLIT 2"]
-	b -> d
-	e [label="SPLIT 2"]
-	c -> e
-	f [label="IMPROVE 2 1"]
+	d [label="GENERATE 1 1"]
+	a -> d
+	e [label="GENERATE 1 1"]
+	a -> e
+	f [label="AGGREGATE 1"]
+	b -> f
+	c -> f
 	d -> f
-	g [label="IMPROVE 2 1"]
-	d -> g
-	h [label="IMPROVE 2 1"]
-	e -> h
-	i [label="IMPROVE 2 1"]
-	e -> i
-	j [label="SPLIT 2"]
-	f -> j
-	k [label="SPLIT 2"]
-	g -> k
-	l [label="SPLIT 2"]
-	h -> l
-	m [label="SPLIT 2"]
-	i -> m
-	n [label="IMPROVE 2 1"]
-	j -> n
-	o [label="IMPROVE 2 1"]
-	j -> o
-	p [label="IMPROVE 2 1"]
-	k -> p
-	q [label="IMPROVE 2 1"]
-	k -> q
-	r [label="IMPROVE 2 1"]
-	l -> r
-	s [label="IMPROVE 2 1"]
-	l -> s
-	t [label="IMPROVE 2 1"]
-	m -> t
-	u [label="IMPROVE 2 1"]
-	m -> u
-	v [label="AGGREGATE 9"]
-	n -> v
-	o -> v
-	p -> v
-	q -> v
-	r -> v
-	s -> v
-	t -> v
-	u -> v
+	e -> f
 }

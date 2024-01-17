@@ -19,6 +19,7 @@ def run():
     sequence = [START_TOKEN, 4, 16, 23, END_TOKEN]
 
     graph:GraphOfOperations = drawer.degraph(sequence, is_visualize=True)
+    graph.visualize()
 
     executor = Controller(
         lm,
