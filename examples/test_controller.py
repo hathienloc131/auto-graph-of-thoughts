@@ -9,17 +9,17 @@ def run():
     tokenizer = Tokenizer()
     drawer = Drawer(tokenizer)
     lm = ChatGPT()
-    list = "[9, 6, 7, 7, 2, 0, 2, 2, 3, 5, 0, 9, 2, 2, 4, 4, 5, 2, 5, 1, 2, 8, 3, 8, 3, 9, 6, 0, 4, 2, 2, 3]"
-    main_task = f"Sort this list {list}"
+    list = """Two friends plan to walk along a 43-km trail, starting at opposite ends of the trail at the same time. If Friend P's rate is 15% faster than Friend Q's, how many kilometers will Friend P have walked when they pass each other?\n[ "A)21", "B)21.5", "C)22", "D)22.5", "E)23" ]"""
+    main_task = f"Read the questions carefully and choose the correct option {list}"
     prompter = LanguageModelPrompter(lm, main_task)
 
     START_TOKEN = tokenizer(0)
     END_TOKEN = tokenizer(1)
 
-    sequence = [START_TOKEN, 4, 16, 23, END_TOKEN]
+    sequence = [START_TOKEN, 16, END_TOKEN]
 
     graph:GraphOfOperations = drawer.degraph(sequence, is_visualize=True)
-    graph.visualize()
+    # graph.visualize()
 
     executor = Controller(
         lm,
