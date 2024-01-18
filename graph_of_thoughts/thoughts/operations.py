@@ -298,8 +298,8 @@ class Improve(Generate):
     operation_name: str = "IMPROVE"
 
 
-    def __init__(self, num_try:int = 1, num_choice:int = 1) -> None:
-        super().__init__(num_try, num_choice)
+    def __init__(self, num_try:int = 1, num_choice:int = 1, part:int = None) -> None:
+        super().__init__(num_try, num_choice, part)
 
 
     def _execute(
@@ -316,14 +316,14 @@ class Improve(Generate):
         - parser: `<Parser>` The parser for parsing responses.
         - kwargs: Additional parameters for execution.
         """
-        previous_thoughts = [Thought.from_thought(self.get_previous_thoughts()[self.part])]
-
-        if len(previous_thoughts) == 0 and len(self.predecessors) > 0:
-            return
-
+        previous_thoughts: List[Thought] = self.get_previous_thoughts()
         if len(previous_thoughts) == 0:
+            if len(self.predecessors) > 0:
+                return
             # no predecessors, use kwargs as base state
             previous_thoughts = [Thought(state=kwargs)]
+        else:
+            previous_thoughts = [(Thought.from_thought(self.get_previous_thoughts()[self.part]))]
 
         for thought in previous_thoughts:
             base_state = thought.state
@@ -397,10 +397,12 @@ class Aggregate(Operation):
             "current": [],
         }
 
-        for thought in previous_thoughts:
+        for idx, thought in enumerate(previous_thoughts):
             base_state["state"].append(thought.state["state"])
             base_state["current"].append(thought.state["current"])
 
+        base_state["state"] = "\n".join(base_state["state"])
+        base_state["current"] = "\n".join(base_state["current"])
 
         aggregate_state, aggregate_prompt = prompter.aggregate_prompt(base_state, **kwargs)
 

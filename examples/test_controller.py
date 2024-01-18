@@ -9,14 +9,14 @@ def run():
     tokenizer = Tokenizer()
     drawer = Drawer(tokenizer)
     lm = ChatGPT()
-    list = """Two friends plan to walk along a 43-km trail, starting at opposite ends of the trail at the same time. If Friend P's rate is 15% faster than Friend Q's, how many kilometers will Friend P have walked when they pass each other?\n[ "A)21", "B)21.5", "C)22", "D)22.5", "E)23" ]"""
-    main_task = f"Read the questions carefully and choose the correct option {list}"
+    list = """9 + 4 + 5 - 1 - 9 + 0 + 3 + 5 - 9 + 2 - 1 - 3"""
+    main_task = f"Calculation the expression and only answer the number: {list}"
     prompter = LanguageModelPrompter(lm, main_task)
 
     START_TOKEN = tokenizer(0)
     END_TOKEN = tokenizer(1)
 
-    sequence = [START_TOKEN, 16, END_TOKEN]
+    sequence = [START_TOKEN, 4, 9, 23, END_TOKEN]
 
     graph:GraphOfOperations = drawer.degraph(sequence, is_visualize=True)
     # graph.visualize()
