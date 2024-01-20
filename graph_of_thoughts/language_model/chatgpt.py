@@ -89,7 +89,7 @@ class ChatGPT(AbstractLanguageModel):
             while num_responses > 0 and total_num_attempts > 0:
                 try:
                     assert next_try > 0
-                    res = self.chat([{"role": "user", "content": query}], next_try)
+                    res = self.chat(message, next_try)
                     response.append(res)
                     num_responses -= next_try
                     next_try = min(num_responses, next_try)
@@ -144,9 +144,11 @@ class ChatGPT(AbstractLanguageModel):
         :return: List of response strings.
         :rtype: List[str]
         """
-        if isinstance(query_response, Dict) or isinstance(query_response, object):
+        if isinstance(query_response, Dict) or (isinstance(query_response, object) and not isinstance(query_response, list)):
             query_response = [query_response]
-        # print(query_response)
+            
+    
+            
         return [
             choice.message.content
             for response in query_response

@@ -4,6 +4,7 @@ from typing import List
 from graph_of_thoughts.language_model import AbstractLanguageModel
 from graph_of_thoughts.thoughts import GraphOfOperations, Thought
 from graph_of_thoughts.prompter import Prompter
+from graph_of_thoughts.judge import Judge
 from graph_of_thoughts.parser import Parser
 
 
@@ -20,6 +21,8 @@ class Controller:
         graph: GraphOfOperations,
         prompter: Prompter,
         parser: Parser,
+        judge: Judge,
+
         problem_parameters: dict,
     ) -> None:
         """
@@ -37,6 +40,7 @@ class Controller:
         self.graph = graph
         self.prompter = prompter
         self.parser = parser
+        self.judge = judge
         self.problem_parameters = problem_parameters
         self.run_executed = False
 
@@ -56,7 +60,7 @@ class Controller:
 
         while len(execution_queue) > 0:
             current_operation = execution_queue.pop(0)
-            current_operation.execute(self.lm, self.prompter, self.parser, **self.problem_parameters)
+            current_operation.execute(self.lm, self.prompter, self.parser, self.judge, **self.problem_parameters)
             for operation in current_operation.successors:
                 assert (
                     operation in self.graph.operations
