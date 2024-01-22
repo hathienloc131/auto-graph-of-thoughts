@@ -209,6 +209,7 @@ class Split(Operation):
             )
             
             for new_state in parser.parse_split_answer(self.__dict__, base_state, responses):
+                new_state = {**base_state, **new_state}
                 new_state["state"] = split_state
                 self.thoughts.append(Thought(new_state))
 
@@ -284,6 +285,7 @@ class Generate(Operation):
                 responses = judge.ranking(score_prompt, generate_prompt, responses, self.num_choice)
 
             for new_state in parser.parse_generate_answer(self.__dict__, base_state, responses):
+                new_state = {**base_state, **new_state}
                 new_state["state"] = generate_state
                 self.thoughts.append(Thought(new_state))
         if (len(self.thoughts) > self.num_try * len(previous_thoughts)):
@@ -341,6 +343,7 @@ class Improve(Generate):
                 responses = judge.ranking(score_prompt, generate_prompt, responses, self.num_choice)
 
             for new_state in parser.parse_generate_answer(self.__dict__, base_state, responses):
+                new_state = {**base_state, **new_state}
                 new_state["state"] = generate_state
                 self.thoughts.append(Thought(new_state))
         if (len(self.thoughts) > self.num_try * len(previous_thoughts)):
@@ -421,6 +424,7 @@ class Aggregate(Operation):
             responses = judge.ranking(score_prompt, aggregate_prompt, responses)
 
         for new_state in parser.parse_generate_answer(self.__dict__, base_state, responses):
+                new_state = {**base_state, **new_state}
                 new_state["state"] = aggregate_state
                 self.thoughts.append(Thought(new_state))
 
