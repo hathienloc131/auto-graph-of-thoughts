@@ -413,6 +413,8 @@ class Aggregate(Operation):
 
         base_state["state"] = "\n".join(base_state["state"])
         base_state["current"] = "\n".join(base_state["current"])
+        base_state["origin"] = previous_thoughts[0].state["origin"]
+
 
         aggregate_state, aggregate_prompt = prompter.aggregate_prompt(base_state, **kwargs)
 

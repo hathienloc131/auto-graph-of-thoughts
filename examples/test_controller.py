@@ -13,7 +13,7 @@ def run():
     lm = ChatGPT()
     list = "[9, 6, 7, 7, 2, 0, 2, 2, 3, 5, 0, 9, 2, 2, 4, 4, 5, 2, 5, 1, 2, 8, 3, 8, 3, 9, 6, 0, 4, 2, 2, 3]"
     main_task = f"Sort this list {list}"
-    prompter = LanguageModelPrompter(lm, main_task)
+    prompter = LanguageModelPrompter(lm)
     judge = LanguageModelJudge(lm)
 
 
@@ -34,6 +34,7 @@ def run():
         {
             "state": f"START",
             "current": "START",
+            "origin": main_task,
             "phase": 0,
         },
     )
