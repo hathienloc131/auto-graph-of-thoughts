@@ -37,7 +37,7 @@ class SortingParser(Parser):
             for part, ans in enumerate(_texts):
                 new_state = state.copy()
                 new_state["previous"] = new_state["current"]
-                new_state["current"] = str(part + 1) + ". " + ans
+                new_state["current"] =f"Subtask {str(part + 1)}: {ans}"
                 new_state["part"] = int(part)
                 new_states.append(new_state)
             
@@ -67,7 +67,7 @@ class SortingParser(Parser):
             # We expect a json which contains the four lists named "List 1" to "List 4"
             # cut everything until the opening bracket and everything after the closing bracket
             try:
-                text = text[text.index("<S>") : text.index("</S>")].replace("<S>", "")
+                text = text.replace("<S>","").replace("</S>", "")
     
                 new_state = state.copy()
                 new_state["previous"] = new_state["current"]

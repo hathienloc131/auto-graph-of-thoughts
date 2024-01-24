@@ -18,7 +18,7 @@ class LanguageModelPrompter(Prompter):
         return split_prompt_raw, split_prompt
     
     def generate_prompt(self, state_dicts: Dict, **kwargs) -> tuple[str, str]:
-        query = f"""<Description>Give me ONLY the TASK that use exactly RESULT OF PREVIOUS TASK to get closer PROBLEM after have finished necessary information in PREVIOUS TASK. TASK do not merge or divive RESULT OF PREVIOUS TASK</Description> \n PROBLEM: {state_dicts["origin"]} \n PREVIOUS TASK: {state_dicts["state"]} \n RESULT OF PREVIOUS TASK: {state_dicts["current"]} \n TASK:"""
+        query = f"""<Description>Give me a TASK I should process RESULT OF PREVIOUS TASK after I have finished PREVIOUS TASK and know its RESULT OF PREVIOUS TASK to solve the PROBLEM.</Description> \n PROBLEM: {state_dicts["origin"]} \n PREVIOUS TASK: {state_dicts["state"]} \n RESULT OF PREVIOUS TASK: {state_dicts["current"]} \n TASK:"""
         generate_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.system_prompt))[0]
         
         generate_prompt = f"""<Instruction>{generate_prompt_raw} </Instruction> \n INPUT: {state_dicts["current"]} \n PROBLEM: {state_dicts["origin"]} \n OUTPUT:"""
