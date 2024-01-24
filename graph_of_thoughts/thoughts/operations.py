@@ -195,6 +195,8 @@ class Split(Operation):
         - parser: `<Parser>` The parser for parsing responses.
         - kwargs: Additional parameters for execution.
         """
+        self.thoughts = []
+
         previous_thoughts: List[Thought] = self.get_previous_thoughts()
         if len(previous_thoughts) == 0:
             # no predecessors, use kwargs as base state
@@ -214,8 +216,7 @@ class Split(Operation):
                 self.thoughts.append(Thought(new_state))
 
         if (len(self.thoughts) > self.num_split):
-            print(self.thoughts)
-            raise Exception("LM returns more thoughts than expected.")
+            print("LM returns more thoughts than expected.")
 
 
     def __repr__(self) -> str:
@@ -264,6 +265,8 @@ class Generate(Operation):
         - parser: `<Parser>` The parser for parsing responses.
         - kwargs: Additional parameters for execution.
         """
+        self.thoughts = []
+
         previous_thoughts: List[Thought] = self.get_previous_thoughts()
         if len(previous_thoughts) == 0:
             if len(self.predecessors) > 0:
@@ -289,7 +292,7 @@ class Generate(Operation):
                 new_state["state"] = generate_state
                 self.thoughts.append(Thought(new_state))
         if (len(self.thoughts) > self.num_try * len(previous_thoughts)):
-            raise Exception(f"Generate operation {self.id} created more thoughts than expected")
+            print(f"Generate operation {self.id} created more thoughts than expected")
 
 
     def __repr__(self) -> str:
@@ -322,6 +325,8 @@ class Improve(Generate):
         - parser: `<Parser>` The parser for parsing responses.
         - kwargs: Additional parameters for execution.
         """
+        self.thoughts = []
+
         previous_thoughts: List[Thought] = self.get_previous_thoughts()
         if len(previous_thoughts) == 0:
             if len(self.predecessors) > 0:
@@ -392,6 +397,8 @@ class Aggregate(Operation):
         `Raises`:
         - `AssertionError`: If operation has no predecessors.
         """
+        self.thoughts = []
+        
         assert (
             len(self.predecessors) >= 1
         ), "Aggregate operation must have at least one predecessor"
