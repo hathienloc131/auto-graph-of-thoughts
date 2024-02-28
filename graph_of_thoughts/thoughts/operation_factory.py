@@ -11,13 +11,13 @@ class OperationFactory:
             return Generate(
                 num_try=o_kwargs["num_try"],
                 num_choice=o_kwargs["num_choice"],
-                part=None if "part" not in o_kwargs.keys() else o_kwargs["part"]
+                part=0 if "part" not in o_kwargs.keys() else o_kwargs["part"]
             )
         elif o_kwargs["type"] == OperationType.improve:
             return Improve(
                 num_try=o_kwargs["num_try"],
                 num_choice=o_kwargs["num_choice"],
-                part=None if "part" not in o_kwargs.keys() else o_kwargs["part"]
+                part=0 if "part" not in o_kwargs.keys() else o_kwargs["part"]
             )
         elif o_kwargs["type"] == OperationType.split:
             return Split(

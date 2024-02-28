@@ -68,3 +68,14 @@ class Controller:
                 if operation.can_be_executed():
                     execution_queue.append(operation)
         self.run_executed = True
+        
+    def get_final_thoughts(self) -> List[List[Thought]]:
+        """
+        Retrieve the final thoughts after all operations have been executed.
+
+        :return: List of thoughts for each operation in the graph's leaves.
+        :rtype: List[List[Thought]]
+        :raises AssertionError: If the `run` method hasn't been executed yet.
+        """
+        assert self.run_executed, "The run method has not been executed"
+        return [operation.get_thoughts() for operation in self.graph.leaves]

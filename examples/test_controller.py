@@ -1,5 +1,5 @@
 import pandas as pd
-
+import numpy as np
 from graph_of_thoughts.thoughts import OperationType, GraphOfOperations
 from graph_of_thoughts.drawer import Tokenizer, Drawer, Controller
 from graph_of_thoughts.language_model import ChatGPT
@@ -9,6 +9,32 @@ from graph_of_thoughts.parser import SortingParser
 
 def main_task(list: str):
     return f"Sort this list {list}"
+
+def parse_list(str_list):
+    list = str_list[str_list.find('['): str_list.find(']') + 1].replace(' ', '').split(',')
+    real_list = []
+    for x in list:
+        try:
+            real_list.append(int(x))
+        except:
+            continue
+    return real_list
+
+def error_score(current_list, correct_list):
+    current_list = parse_list(current_list)
+    correct_list = parse_list(correct_list)
+    num_errors = 0
+    for i in range(10):
+        num_errors += abs(
+            sum([1 for num in current_list if num == i])
+            - sum([1 for num in correct_list if num == i])
+        )
+    num_errors += sum(
+        [1 for num1, num2 in zip(current_list, current_list[1:]) if num1 > num2]
+    )
+
+    return num_errors
+    
 
 def run(file_name: str):
     tokenizer = Tokenizer()
@@ -25,12 +51,13 @@ def run(file_name: str):
 
     sequence = [START_TOKEN, 4, 20, 27, END_TOKEN]
 
-    
+    error_score_list = []
     # graph.visualize()
 
     for ind in df.index:
         try:
-            graph:GraphOfOperations = drawer.degraph(sequence, is_visualize=True)
+            print(f"Attempt {ind}: \n")
+            graph:GraphOfOperations = drawer.degraph(sequence, is_visualize=False)
             executor = Controller(
                 lm,
                 graph,
@@ -39,14 +66,20 @@ def run(file_name: str):
                 judge,
                 {
                     "state": f"START",
-                    "current": "START",
-                    "origin": main_task(df["Unsorted"][ind]),
+                    "current": f"START",
+                    "origin": main_task(df['Unsorted'][ind]),
                     "phase": 0,
                 },
             )
             executor.run()
-            print(df["Sorted"][ind])
-            print("-------------------------------------------------------------------------")
+            thought = executor.get_final_thoughts()[0][0].state["current"]
+  
+            error_s = error_score(thought, df["Sorted"][ind])
+            print(f"error score {ind}: {error_s}")
+            error_score_list.append(min(error_s, 32))
+            print("\n-------------------------------------------------------------------------\n")
         except Exception as e:
             print(ind, f"meet {e}")
+    print(error_score_list)
+    print(np.mean(error_score_list))
     

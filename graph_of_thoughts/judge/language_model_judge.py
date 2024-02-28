@@ -11,7 +11,7 @@ class LanguageModelJudge(Judge):
 
     def ranking(self, score_prompt, current_task, candidate, num_choices = 1) -> tuple[str, str]:
         assert num_choices <= len(candidate), 'num_choices must be less than or equal candidate'
-        candidate_answer = "\n".join([f"{e}. {answer}" for e, answer in enumerate(candidate)])
+        candidate_answer = "\n".join([f"Candidate {e}. {answer}" for e, answer in enumerate(candidate)])
         query = f"""<SCORING CRITERIA>{score_prompt}</SCORING CRITERIA> \n CURRENT TASK:{current_task} {candidate_answer}\n ANSWER:"""
         ranking_answer = self.lm.get_response_texts(self.lm.query(query, 1, self.system_prompt))[0]
         try:
