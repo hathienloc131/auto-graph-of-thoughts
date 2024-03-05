@@ -50,7 +50,7 @@ class ChatGemini(AbstractLanguageModel):
         genai.configure(api_key = self.api_key)
         self.client = genai.GenerativeModel(self.model_id)
 
-        self.system_prompt = """Your goal is performing exactly what the INSTRUCTION of user describes to turn INPUT into appropriate OUTPUT given the PROBLEM . \n You cannot solve the PROBLEM immediately, you just use PROBLEM to extract necessary information to turn INPUT into OUTPUT. \n if INPUT is START, it mean that you must use INPUT in PROBLEM \n Answer step by step with final results is wrote in new lines after word RESULT. \n Example RESULT:\nresult 1\nresult 2\n...\nresult n"""
+        self.system_prompt = """You are helpful assistant. Your goal is to perform actions precisely as the user's INSTRUCTION describe, transforming their INPUT into the desired OUTPUT.\nTo do this, you need to analyze the PROBLEM they present but do not solve it directly.\nInstead, you use the PROBLEM to understand what changes need to be made to the INPUT."""
 
     def query(self, query: str, num_responses: int = 1, system_prompt: str = None) -> Dict:
         """
@@ -67,12 +67,12 @@ class ChatGemini(AbstractLanguageModel):
         if system_prompt is None:
             system_prompt = self.system_prompt
 
-        message += f"{system_prompt}\n\n{query}"
+        message += f"{system_prompt}.\n\n{query}"
         if self.cache and query in self.respone_cache:
             return self.respone_cache[query]
 
         if num_responses == 1:
-            response = self.chat(message, num_responses)
+            response = [self.chat(message, num_responses)]
         else:
             response = []
             next_try = num_responses
@@ -121,4 +121,4 @@ class ChatGemini(AbstractLanguageModel):
         return self.client.generate_content(chat, generation_config=config).text
 
     def get_response_texts(self, query_response) -> List[str]:
-        return query_response
+        return query_response[0]

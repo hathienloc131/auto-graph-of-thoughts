@@ -58,7 +58,7 @@ class ChatGPT(AbstractLanguageModel):
             raise ValueError("OPENAI_API_KEY is not set")
         self.client = OpenAI(api_key=OPENAI_API_KEY, organization=ORGANIZATION_KEY)
 
-        self.system_prompt = """You goal is performing exactly what the INSTRUCTION of user describes to turn INPUT into appropriate OUTPUT given the PROBLEM . \n You cannot solve the PROBLEM immediately, you just use PROBLEM to extract necessary information to turn INPUT into OUTPUT. \n if INPUT is START, it mean that you must use INPUT in PROBLEM \n Answer step by step with reasoning. \n Then must answer the final result after word "FINAL OUTPUT: ", each result in the new line , example \n Answer: Reason \nFINAL OUTPUT:\n result 1 \n result 2 \n ... """
+        self.system_prompt = """Your goal is to perform actions precisely as the user's INSTRUCTION describe, transforming their INPUT into the desired OUTPUT.\nTo do this, you need to analyze the PROBLEM they present but do not solve it directly.\nInstead, you use the PROBLEM to understand what changes need to be made to the INPUT."""
 
     def query(self, query: str, num_responses: int = 1, system_prompt: str = None) -> Dict:
         """

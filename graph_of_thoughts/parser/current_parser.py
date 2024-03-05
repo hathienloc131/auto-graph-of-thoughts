@@ -27,12 +27,11 @@ class SortingParser(Parser):
         """
         new_states = []
         text = texts[0]
-        text = text[text.index("FINAL OUTPUT:") : ]
         # We expect a json which contains the four lists named "<S>" and end with "<\S>"
         # cut everything until the opening bracket and everything after the closing bracket
         try:
 
-            _texts = text.split("\n")[1:]
+            _texts = text.split("\n")
             for part, ans in enumerate(_texts):
                 new_state = state.copy()
                 new_state["previous"] = new_state["current"]
@@ -66,8 +65,6 @@ class SortingParser(Parser):
             # We expect a json which contains the four lists named "List 1" to "List 4"
             # cut everything until the opening bracket and everything after the closing bracket
             try:
-                text = text[text.index("FINAL OUTPUT:") : ].replace("FINAL OUTPUT:\n", "")
-    
                 new_state = state.copy()
                 new_state["previous"] = new_state["current"]
                 new_state["current"] = text

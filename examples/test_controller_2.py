@@ -8,7 +8,7 @@ from graph_of_thoughts.judge import LanguageModelJudge
 from graph_of_thoughts.parser import SortingParser
 
 def main_task(list: str):
-    return f"Sort this list {list}"
+    return f"Sorting this list {list}"
 
 def parse_list(str_list):
 
@@ -43,7 +43,7 @@ def error_score(current_list, correct_list):
 def run(file_name: str):
     tokenizer = Tokenizer()
     drawer = Drawer(tokenizer)
-    lm = ChatGemini()
+    lm = ChatGPT()
 
     df = pd.read_csv(file_name)
 
@@ -70,7 +70,7 @@ def run(file_name: str):
                 judge,
                 {
                     "state": f"START",
-                   "current": f"{df['Unsorted'][ind]}",
+                    "current": f"{df['Unsorted'][ind]}",
                     "origin": main_task(df['Unsorted'][ind]),
                     "phase": 0,
                 },
