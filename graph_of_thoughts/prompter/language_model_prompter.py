@@ -17,7 +17,6 @@ class LanguageModelPrompter(Prompter):
         split_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.system_prompt))[0]
         step = self.step_prompt(split_prompt_raw, state_dicts["current"])
         split_prompt = f"""Do exactly INSTRUCTION: {split_prompt_raw} \n{step}\nOnly output {state_dicts["num_split"]} final results without any additional text or thought!\nINPUT: {state_dicts["current"]}\nOUTPUT:"""
-        print(split_prompt)
 
         return split_prompt_raw, split_prompt
     
@@ -26,7 +25,6 @@ class LanguageModelPrompter(Prompter):
         generate_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.system_prompt))[0]
         step = self.step_prompt(generate_prompt_raw, state_dicts["current"])
         generate_prompt = f"""INSTRUCTION: {generate_prompt_raw} \n{step}\nOnly output final result without any additional text or thought!\nINPUT: {state_dicts["current"]}\nOUTPUT:"""
-        print(generate_prompt)
         return generate_prompt_raw, generate_prompt
     
     def aggregate_prompt(self, state_dicts: Dict, **kwargs) -> tuple[str, str]:
@@ -34,7 +32,6 @@ class LanguageModelPrompter(Prompter):
         aggregate_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.system_prompt))[0]
         step = self.step_prompt(aggregate_prompt_raw, state_dicts["current"])
         aggregate_prompt = f"""INSTRUCTION: {aggregate_prompt_raw} \n{step}\nOnly output final result without any additional text or thought!\nINPUT: {state_dicts["current"]}\nOUTPUT:"""
-        print(aggregate_prompt)
         return  aggregate_prompt_raw, aggregate_prompt
     
 
