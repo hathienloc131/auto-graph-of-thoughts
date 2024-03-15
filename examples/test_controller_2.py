@@ -13,12 +13,13 @@ def main_task(list: str):
 def parse_list(str_list):
 
     start_list = str_list.find('[') if str_list.find('[') != -1 else 0
-    end_list = str_list.find(']') + 1 if str_list.find('[') != -1 else -1
+    end_list = str_list.find(']') if str_list.find(']') != -1 else len(str_list)
     list = str_list[start_list: end_list].replace(' ', '').split(',')
     real_list = []
     for x in list:
         try:
-            real_list.append(int(x))
+            if x.isdigit():
+                real_list.append(int(x))
         except:
             continue
     return real_list
@@ -40,7 +41,7 @@ def error_score(current_list, correct_list):
     return num_errors
     
 
-def run(file_name: str):
+def run(file_name: str, length: int):
     tokenizer = Tokenizer()
     drawer = Drawer(tokenizer)
     lm = ChatGPT()
@@ -49,15 +50,17 @@ def run(file_name: str):
 
     prompter = LanguageModelPrompter(lm)
     judge = LanguageModelJudge(lm)
-
+    # print(tokenizer.dictionary)
     START_TOKEN = tokenizer(0)
     END_TOKEN = tokenizer(1)
 
-    sequence = [START_TOKEN, 4, 17, 24, END_TOKEN]
+    # sequence = [START_TOKEN, 7, 17, 24, 10, END_TOKEN]
+    sequence = [START_TOKEN, 2, 17, 24, END_TOKEN]
+
 
     error_score_list = []
     # graph.visualize()
-
+    
     for ind in df.index:
         try:
             print(f"Attempt {ind}: \n")
@@ -80,7 +83,7 @@ def run(file_name: str):
   
             error_s = error_score(thought, df["Sorted"][ind])
             print(f"error score {ind}: {error_s}")
-            error_score_list.append(min(error_s, 32))
+            error_score_list.append(min(error_s, length))
             print("\n-------------------------------------------------------------------------\n")
         except Exception as e:
             print(ind, f"meet {e}")

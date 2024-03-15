@@ -35,7 +35,7 @@ class SortingParser(Parser):
             for part, ans in enumerate(_texts):
                 new_state = state.copy()
                 new_state["previous"] = new_state["current"]
-                new_state["current"] =f"Subtask {str(part + 1)}: {ans}"
+                new_state["current"] =f"{str(part + 1)}: {ans}"
                 new_state["part"] = int(part)
                 new_states.append(new_state)
             

@@ -56,7 +56,7 @@ class Tokenizer():
         start_idx = int(np.ceil(np.log2(start)))
         end_idx = int(np.log2(end))
         list_range = np.arange(start_idx, end_idx + 1, step=1, dtype=int)
-        power_range = np.power(list_range, 2)
+        power_range = np.power(2, list_range)
         return power_range
 
     def _process_range_combine(self, start: int, end: int, n: int):

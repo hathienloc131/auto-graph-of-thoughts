@@ -415,8 +415,8 @@ class Aggregate(Operation):
         }
 
         for idx, thought in enumerate(previous_thoughts):
-            base_state["state"].append(f'{idx+1}. {thought.state["state"]}')
-            base_state["current"].append(f'{idx+1}. {thought.state["current"]}')
+            base_state["state"].append(f'TASK {idx+1}: {thought.state["state"]}')
+            base_state["current"].append(f'RESULT OF TASK {idx+1}: {thought.state["current"]}')
 
         base_state["state"] = "\n".join(base_state["state"])
         base_state["current"] = "\n".join(base_state["current"])
