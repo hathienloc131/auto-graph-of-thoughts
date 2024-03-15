@@ -55,7 +55,7 @@ def run(file_name: str, length: int):
     END_TOKEN = tokenizer(1)
 
     # sequence = [START_TOKEN, 7, 17, 24, 10, END_TOKEN]
-    sequence = [START_TOKEN, 2, 17, 24, END_TOKEN]
+    sequence = [START_TOKEN, 7, 17, 24, END_TOKEN]
 
 
     error_score_list = []
