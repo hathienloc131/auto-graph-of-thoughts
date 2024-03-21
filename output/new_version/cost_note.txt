@@ -1,0 +1,7 @@
+gpt3-5:
+    - sorting 32: 0.68$
+    - sorting 128: 0.79$
+
+gpt3-5:
+    - intersection 32: 0.64$
+    - intersection 128: 

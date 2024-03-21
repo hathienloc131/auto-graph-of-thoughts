@@ -17,7 +17,7 @@ class LanguageModelPrompter(Prompter):
         query = f"""Give me a NEXT TASK that divides the PREVIOUS TASK into {state_dicts["num_split"]} equal subtasks, taking into account the RESULT OF PREVIOUS TASK.\nPROBLEM: {state_dicts["origin"]} \nPREVIOUS TASK: {state_dicts["state"]} \nRESULT OF PREVIOUS TASK: {state_dicts["current"]} \nNEXT TASK:"""
 
         split_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.system_prompt))[0]
-        step = self.step_prompt(split_prompt_raw, state_dicts["current"])
+        step = self.step_prompt(split_prompt_raw, state_dicts["current"], {state_dicts["origin"]})
         split_prompt = f"""Do exactly INSTRUCTION: {split_prompt_raw} \n{step}\nOnly output {state_dicts["num_split"]} final results without any additional text or thought!\nINPUT: {state_dicts["current"]}\nOUTPUT:"""
         print(step)
 
@@ -26,16 +26,18 @@ class LanguageModelPrompter(Prompter):
     def generate_prompt(self, state_dicts: Dict, **kwargs) -> tuple[str, str]:
         query = f"""After completing the PREVIOUS TASK, give me the required NEXT TASK that use only RESULT OF PREVIOUS TASK as INPUT to progress towards solving the PROBLEM.\nPROBLEM: {state_dicts["origin"]} \nPREVIOUS TASK: {state_dicts["state"]}\nRESULT OF PREVIOUS TASK: {state_dicts["current"]}\nNEXT TASK:"""
         generate_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.system_prompt))[0]
-        step = self.step_prompt(generate_prompt_raw, state_dicts["current"])
+        step = self.step_prompt(generate_prompt_raw, state_dicts["current"], {state_dicts["origin"]})
         generate_prompt = f"""INSTRUCTION: {generate_prompt_raw} \n{step}\nOnly output final result without any additional text or thought!\nINPUT: {state_dicts["current"]}\nOUTPUT:"""
         print(step)
         return generate_prompt_raw, generate_prompt
     
     def aggregate_prompt(self, state_dicts: Dict, **kwargs) -> tuple[str, str]:
-        query = f"""Please give me ONLY a single NEXT TASK that combine all its RESULT OF PREVIOUS TASK into a single result from PREVIOUS TASKS to solve the PROBLEM.\nPROBLEM: {state_dicts["origin"]} \nPREVIOUS TASK: {state_dicts["state"]} \nRESULT OF PREVIOUS TASK: {state_dicts["current"]} \nNEXT TASK:"""
+        query = f"""Please give me ONLY a single NEXT TASK that combine or integrate all its RESULT OF PREVIOUS TASK into a single result from PREVIOUS TASKS to solve the PROBLEM.\nPROBLEM: {state_dicts["origin"]} \nPREVIOUS TASK: {state_dicts["state"]} \nRESULT OF PREVIOUS TASK: {state_dicts["current"]} \nNEXT TASK:"""
         aggregate_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.system_prompt))[0]
-        step = self.step_prompt(aggregate_prompt_raw, state_dicts["current"])
+        print(query)
+        step = self.step_prompt(aggregate_prompt_raw, state_dicts["current"], {state_dicts["origin"]})
         aggregate_prompt = f"""INSTRUCTION: {aggregate_prompt_raw} \n{step}\nOnly output final result without any additional text or thought!\nINPUT: {state_dicts["current"]}\nOUTPUT:"""
+        print(aggregate_prompt)
         print(step)
         
         return  aggregate_prompt_raw, aggregate_prompt
@@ -56,12 +58,12 @@ class LanguageModelPrompter(Prompter):
         return error
     
     def score_prompt(self, state_dicts: Dict, **kwargs) -> tuple[str, str]:
-        query = f"""Give me a list of SCORING CRITERIA used to evaluate the correctness of answer when performing TASK on INPUT.\nOnly output SCORING CRITERIA without any additional text or thought!.\nTASK: {state_dicts["state"]} \nINPUT: {input}\nSCORING CRITERIA:"""
+        query = f"""Give me a list of SCORING CRITERIA used to evaluate the correctness of answer when performing TASK.\nOnly output SCORING CRITERIA without any additional text or thought!.\nTASK: {state_dicts["state"]}\nSCORING CRITERIA:"""
         score_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.score_system_prompt))[0]
 
         return  score_prompt_raw
         
-    def step_prompt(self, task, input):
-        query = f"""Give me step by step to perform TASK on INPUT. Double check to correct any error in each step.\nTASK: {task}\nINPUT: {input}\nSTEP:"""
+    def step_prompt(self, task, input, problem):
+        query = f"""Give me step by step to perform TASK on INPUT to progress towards solving the PROBLEM. Double check to correct any error in each step.\nPROBLEM: {problem}\nTASK: {task}\nINPUT: {input}\nSTEP:"""
         step = self.lm.get_response_texts(self.lm.query(query, 1, self.step_system_prompt))[0]
         return step
