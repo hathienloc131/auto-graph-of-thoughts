@@ -1,3 +1,4 @@
+from collections import Counter
 def parse_list(str_list):
 
     start_list = str_list.find('[') if str_list.find('[') != -1 else 0
@@ -11,6 +12,14 @@ def parse_list(str_list):
         except:
             continue
     return real_list
+
+def string_to_list(str_list):
+
+    assert str_list[0] == "[" and str_list[-1] == "]", "str_list is not a list."
+    return [
+        item.strip().replace("'", "").replace('"', "")
+        for item in str_list[1:-1].split(", ")
+    ]
 
 def parse_set(str_set):
 
@@ -45,6 +54,29 @@ def error_score_sorting(current_list, correct_list):
 def error_score_intersection(current_set, correct_set):
     current_set = parse_list(current_set)
     correct_set = parse_list(correct_set)
+    print(current_set, correct_set)
+    common = sorted(correct_set)
+    llm_solution = sorted(current_set)
+    num_errors = 0
+    common_idx = 0
+    llm_idx = 0
+    while common_idx < len(common) and llm_idx < len(llm_solution):
+        if common[common_idx] == llm_solution[llm_idx]:
+            common_idx += 1
+            llm_idx += 1
+        elif common[common_idx] < llm_solution[llm_idx]:
+            common_idx += 1
+            num_errors += 1
+        elif common[common_idx] > llm_solution[llm_idx]:
+            llm_idx += 1
+            num_errors += 1
+    num_errors += len(common) - common_idx + len(llm_solution) - llm_idx
+    return num_errors
+
+    
+def error_score_keyword_counting(current_answer, correct_list):
+    current_set = parse_list(current_set)
+    correct_set = dict(Counter((parse_list(correct_list))))
     print(current_set, correct_set)
     common = sorted(correct_set)
     llm_solution = sorted(current_set)

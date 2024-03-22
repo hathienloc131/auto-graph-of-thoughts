@@ -32,12 +32,16 @@ class SortingParser(Parser):
         try:
 
             _texts = text.split("\n")
+            i = 0
             for part, ans in enumerate(_texts):
+                if ans.endswith(": ") or ans.endswith(":") or ans=="":
+                    continue
                 new_state = state.copy()
                 new_state["previous"] = new_state["current"]
-                new_state["current"] =f"{str(part + 1)}: {ans}"
-                new_state["part"] = int(part)
+                new_state["current"] =f"{str(i + 1)}: {ans}"
+                new_state["part"] = int(i)
                 new_states.append(new_state)
+                i+=1
             
             return new_states
         except Exception as e:

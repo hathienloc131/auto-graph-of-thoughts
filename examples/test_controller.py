@@ -15,7 +15,7 @@ def main_task(set1: str, set2: str):
 def run(file_name: str, length: int):
     tokenizer = Tokenizer()
     drawer = Drawer(tokenizer)
-    lm = ChatGemini()
+    lm = ChatGPT()
 
     df = pd.read_csv(file_name)
 
@@ -25,9 +25,12 @@ def run(file_name: str, length: int):
     START_TOKEN = tokenizer(0)
     END_TOKEN = tokenizer(1)
 
-    # sequence = [START_TOKEN, 7, 17, 24, 10, END_TOKEN]
-    sequence = [START_TOKEN, 2, 17, 24, END_TOKEN]
+    # sequence = [START_TOKEN, 7, 17, 24, END_TOKEN] # 128
+    sequence = [START_TOKEN, 4, 17, 24, END_TOKEN] # 64
+
+    # sequence = [START_TOKEN, 2, 17, 24, END_TOKEN] # 32
     # sequence = [START_TOKEN, 17, END_TOKEN]
+
 
     error_score_list = []
     # graph.visualize()

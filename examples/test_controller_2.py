@@ -6,10 +6,10 @@ from graph_of_thoughts.language_model import ChatGPT, ChatGemini
 from graph_of_thoughts.prompter import LanguageModelPrompter
 from graph_of_thoughts.judge import LanguageModelJudge
 from graph_of_thoughts.parser import SortingParser
-from graph_of_thoughts.error_utils import error_score_intersection
+from graph_of_thoughts.error_utils import error_score_keyword_counting
 
-def main_task(set1: str, set2: str):
-    return f"Intersecting list 1 {set1} and list 2 {set2}"
+def main_task(paragraph: str):
+    return f"Calculate the frequency of each country's appearance in the paragraph: '{paragraph}'"
 
 
 def run(file_name: str, length: int):
@@ -25,8 +25,10 @@ def run(file_name: str, length: int):
     START_TOKEN = tokenizer(0)
     END_TOKEN = tokenizer(1)
 
-    sequence = [START_TOKEN, 7, 17, 24, END_TOKEN]
-    # sequence = [START_TOKEN, 2, 17, 24, END_TOKEN]
+    # sequence = [START_TOKEN, 7, 17, 24, END_TOKEN] # 128
+    # sequence = [START_TOKEN, 4, 17, 24, END_TOKEN] # 64
+
+    sequence = [START_TOKEN, 2, 17, 24, END_TOKEN] # 32
     # sequence = [START_TOKEN, 17, END_TOKEN]
 
     error_score_list = []
@@ -44,20 +46,21 @@ def run(file_name: str, length: int):
                 judge,
                 {
                     "state": f"START",
-                    "current": f"list 1 {df['SET1'][ind]}",
-                    "origin": main_task(df['SET1'][ind], df['SET2'][ind]),
+                    "current": f'Paragraph: "{df['Text'][ind]}"',
+                    "origin": main_task(df['Text'][ind]),
                     "phase": 0,
                 },
             )
             executor.run()
             thought = executor.get_final_thoughts()[0][0].state["current"]
-  
-            error_s = error_score_intersection(thought, df["INTERSECTION"][ind])
-            print(f"error score {ind}: {error_s}")
-            error_score_list.append(min(error_s, length))
+            print(thought)
+            # error_s = error_score_keyword_counting(thought, df["INTERSECTION"][ind])
+            # print(f"error score {ind}: {error_s}")
+            # error_score_list.append(min(error_s, length))
             print("\n-------------------------------------------------------------------------\n")
         except Exception as e:
             print(ind, f"meet {e}")
+        break
     print(error_score_list)
     print(np.mean(error_score_list))
     
