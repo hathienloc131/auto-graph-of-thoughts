@@ -8,6 +8,7 @@ class LanguageModelPrompter(Prompter):
         super().__init__()
         self.lm = lm
         self.system_prompt = system_prompt
+        self.json_format = json_format
         self.step_system_prompt="""You are a helpful guide that instructs user step by step to perform their TASK and knowing its INPUT."""
         self.score_system_prompt="""You are a helpful guide that give user a list of required CRITERIA to evaluate the correctness of their TASK."""
         self.error_system_prompt="""You are a helpful guide that indicates any errors in user OUTPUT after the user performs their TASK on that INPUT. You should indacate details error as possible including where the error occurred, what caused the error, and how to fix the error."""
@@ -27,7 +28,7 @@ class LanguageModelPrompter(Prompter):
         query = f"""After completing the PREVIOUS TASK, give me the required NEXT TASK that use only RESULT OF PREVIOUS TASK as INPUT to progress towards solving the PROBLEM.\nPROBLEM: {state_dicts["origin"]} \nPREVIOUS TASK: {state_dicts["state"]}\nRESULT OF PREVIOUS TASK: {state_dicts["current"]}\nNEXT TASK:"""
         generate_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.system_prompt))[0]
         step = self.step_prompt(generate_prompt_raw, state_dicts["current"], {state_dicts["origin"]})
-        generate_prompt = f"""INSTRUCTION: {generate_prompt_raw} \n{step}\nOnly output final result without any additional text or thought!\nINPUT: {state_dicts["current"]}\nOUTPUT:"""
+        generate_prompt = f"""INSTRUCTION: {generate_prompt_raw} \n{step}\nOnly output final result without any additional text or thought!{" Answer in JSON format" if self.json_format else ""}\nINPUT: {state_dicts["current"]}\nOUTPUT:"""
         print(step)
         return generate_prompt_raw, generate_prompt
     
@@ -36,7 +37,7 @@ class LanguageModelPrompter(Prompter):
         aggregate_prompt_raw = self.lm.get_response_texts(self.lm.query(query, 1, self.system_prompt))[0]
         print(query)
         step = self.step_prompt(aggregate_prompt_raw, state_dicts["current"], {state_dicts["origin"]})
-        aggregate_prompt = f"""INSTRUCTION: {aggregate_prompt_raw} \n{step}\nOnly output final result without any additional text or thought!\nINPUT: {state_dicts["current"]}\nOUTPUT:"""
+        aggregate_prompt = f"""INSTRUCTION: {aggregate_prompt_raw} \n{step}\nOnly output final result without any additional text or thought!{" Answer in JSON format" if self.json_format else ""}\nINPUT: {state_dicts["current"]}\nOUTPUT:"""
         print(aggregate_prompt)
         print(step)
         

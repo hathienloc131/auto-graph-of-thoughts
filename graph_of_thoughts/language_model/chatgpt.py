@@ -57,8 +57,8 @@ class ChatGPT(AbstractLanguageModel):
         if self.api_key == "":
             raise ValueError("OPENAI_API_KEY is not set")
         self.client = OpenAI(api_key=OPENAI_API_KEY, organization=ORGANIZATION_KEY)
-
         self.system_prompt = """Your goal is to perform actions precisely as the user's INSTRUCTION describe, transforming their INPUT into the desired OUTPUT.\nTo do this, you need to analyze the PROBLEM they present but do not solve it directly.\nInstead, you use the PROBLEM to understand what changes need to be made to the INPUT."""
+
 
     def query(self, query: str, num_responses: int = 1, system_prompt: str = None) -> Dict:
         """
@@ -71,6 +71,9 @@ class ChatGPT(AbstractLanguageModel):
         :return: Response(s) from the OpenAI model.
         :rtype: Dict
         """
+        json_format = None
+        if "JSON" in query:
+            json_format = { "type": "json_object"}
         message = [{"role": "user", "content": query}]
         if system_prompt is not None:
             message.insert(0, {"role": "system", "content": system_prompt})
@@ -81,7 +84,7 @@ class ChatGPT(AbstractLanguageModel):
             return self.respone_cache[query]
 
         if num_responses == 1:
-            response = self.chat(message, num_responses)
+            response = self.chat(message, num_responses, json_format)
         else:
             response = []
             next_try = num_responses
@@ -89,7 +92,7 @@ class ChatGPT(AbstractLanguageModel):
             while num_responses > 0 and total_num_attempts > 0:
                 try:
                     assert next_try > 0
-                    res = self.chat(message, next_try)
+                    res = self.chat(message, next_try, json_format)
                     response.append(res)
                     num_responses -= next_try
                     next_try = min(num_responses, next_try)
@@ -105,7 +108,7 @@ class ChatGPT(AbstractLanguageModel):
     @backoff.on_exception(
         backoff.expo, openai.OpenAIError, max_time=10, max_tries=6
     )
-    def chat(self, messages: List[Dict], num_responses: int = 1) -> Dict:
+    def chat(self, messages: List[Dict], num_responses: int = 1, json_format=None) -> Dict:
         """
         Send chat messages to the OpenAI model and retrieves the model's response.
         Implements backoff on OpenAI error.
@@ -124,6 +127,7 @@ class ChatGPT(AbstractLanguageModel):
             max_tokens=self.max_tokens,
             n=num_responses,
             stop=self.stop,
+            response_format=json_format
         )
         self.prompt_tokens += response.usage.prompt_tokens
         self.completion_tokens += response.usage.completion_tokens

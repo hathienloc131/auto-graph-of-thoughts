@@ -1,4 +1,5 @@
 from collections import Counter
+import json
 def parse_list(str_list):
 
     start_list = str_list.find('[') if str_list.find('[') != -1 else 0
@@ -75,24 +76,22 @@ def error_score_intersection(current_set, correct_set):
 
     
 def error_score_keyword_counting(current_answer, correct_list):
-    current_set = parse_list(current_set)
-    correct_set = dict(Counter((parse_list(correct_list))))
-    print(current_set, correct_set)
-    common = sorted(correct_set)
-    llm_solution = sorted(current_set)
+    current_freq_dict = json.loads(current_answer)
+    correct_freq_dict = dict(Counter((string_to_list(correct_list))))
+    print(current_freq_dict, correct_freq_dict)
+    countries_not_in_current = set(correct_freq_dict.keys()) - set(
+        current_freq_dict.keys()
+    )
+    countries_not_in_correct = set(current_freq_dict.keys()) - set(
+        correct_freq_dict.keys()
+    )
+    # count the number of errors
     num_errors = 0
-    common_idx = 0
-    llm_idx = 0
-    while common_idx < len(common) and llm_idx < len(llm_solution):
-        if common[common_idx] == llm_solution[llm_idx]:
-            common_idx += 1
-            llm_idx += 1
-        elif common[common_idx] < llm_solution[llm_idx]:
-            common_idx += 1
-            num_errors += 1
-        elif common[common_idx] > llm_solution[llm_idx]:
-            llm_idx += 1
-            num_errors += 1
-    num_errors += len(common) - common_idx + len(llm_solution) - llm_idx
+    for country in countries_not_in_current:
+        num_errors += abs(correct_freq_dict[country])
+    for country in countries_not_in_correct:
+        num_errors += abs(current_freq_dict[country])
+    for country in set(correct_freq_dict.keys()) & set(current_freq_dict.keys()):
+        num_errors += abs(correct_freq_dict[country] - current_freq_dict[country])
     return num_errors
     

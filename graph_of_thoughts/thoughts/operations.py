@@ -209,7 +209,7 @@ class Split(Operation):
             responses = lm.get_response_texts(
                 lm.query(split_prompt)
             )
-            
+            print(responses)
             for new_state in parser.parse_split_answer(self.__dict__, base_state, responses):
                 new_state = {**base_state, **new_state}
                 new_state["state"] = split_state

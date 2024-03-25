@@ -9,19 +9,19 @@ from graph_of_thoughts.parser import SortingParser
 from graph_of_thoughts.error_utils import error_score_keyword_counting
 
 def main_task(paragraph: str):
-    return f"Calculate the frequency of each country's appearance in the paragraph: '{paragraph}'"
+    return f"Calculate the frequency of each country's appearance in the paragraph: '{paragraph}'."
 
 
 def run(file_name: str, length: int):
     tokenizer = Tokenizer()
     drawer = Drawer(tokenizer)
+
     lm = ChatGPT()
 
     df = pd.read_csv(file_name)
 
-    prompter = LanguageModelPrompter(lm)
+    prompter = LanguageModelPrompter(lm, json_format = True)
     judge = LanguageModelJudge(lm)
-    # print(tokenizer.dictionary)
     START_TOKEN = tokenizer(0)
     END_TOKEN = tokenizer(1)
 
@@ -53,10 +53,8 @@ def run(file_name: str, length: int):
             )
             executor.run()
             thought = executor.get_final_thoughts()[0][0].state["current"]
-            print(thought)
-            # error_s = error_score_keyword_counting(thought, df["INTERSECTION"][ind])
-            # print(f"error score {ind}: {error_s}")
-            # error_score_list.append(min(error_s, length))
+            error_s = error_score_keyword_counting(thought, df["Countries"][ind])
+            print(f"error score {ind}: {error_s}")
             print("\n-------------------------------------------------------------------------\n")
         except Exception as e:
             print(ind, f"meet {e}")
