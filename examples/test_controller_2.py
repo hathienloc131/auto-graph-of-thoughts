@@ -15,7 +15,8 @@ def main_task(paragraph: str):
 def run(file_name: str, length: int):
     tokenizer = Tokenizer()
     drawer = Drawer(tokenizer)
-
+    print(tokenizer.dictionary)
+    exit()
     lm = ChatGPT()
 
     df = pd.read_csv(file_name)
@@ -26,9 +27,9 @@ def run(file_name: str, length: int):
     END_TOKEN = tokenizer(1)
 
     # sequence = [START_TOKEN, 7, 17, 24, END_TOKEN] # 128
-    # sequence = [START_TOKEN, 4, 17, 24, END_TOKEN] # 64
+    sequence = [START_TOKEN, 4, 17, 24, END_TOKEN] # 64
 
-    sequence = [START_TOKEN, 2, 17, 24, END_TOKEN] # 32
+    # sequence = [START_TOKEN, 2, 17, 24, END_TOKEN] # 32
     # sequence = [START_TOKEN, 17, END_TOKEN]
 
     error_score_list = []
@@ -36,6 +37,8 @@ def run(file_name: str, length: int):
     
     for ind in df.index:
         try:
+            if ind < 61:
+                continue
             print(f"Attempt {ind}: \n")
             graph:GraphOfOperations = drawer.degraph(sequence, is_visualize=False)
             executor = Controller(
@@ -46,7 +49,7 @@ def run(file_name: str, length: int):
                 judge,
                 {
                     "state": f"START",
-                    "current": f'Paragraph: "{df['Text'][ind]}"',
+                    "current": f'"{df["""Text"""][ind]}"',
                     "origin": main_task(df['Text'][ind]),
                     "phase": 0,
                 },
@@ -54,11 +57,11 @@ def run(file_name: str, length: int):
             executor.run()
             thought = executor.get_final_thoughts()[0][0].state["current"]
             error_s = error_score_keyword_counting(thought, df["Countries"][ind])
+            error_score_list.append(error_s)
             print(f"error score {ind}: {error_s}")
             print("\n-------------------------------------------------------------------------\n")
         except Exception as e:
             print(ind, f"meet {e}")
-        break
     print(error_score_list)
     print(np.mean(error_score_list))
     

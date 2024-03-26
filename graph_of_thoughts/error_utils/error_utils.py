@@ -94,4 +94,48 @@ def error_score_keyword_counting(current_answer, correct_list):
     for country in set(correct_freq_dict.keys()) & set(current_freq_dict.keys()):
         num_errors += abs(correct_freq_dict[country] - current_freq_dict[country])
     return num_errors
+
+SCORE_PROMPT = """
+The following NDA <S> merges NDAs <Doc1> - <Doc4>.
+Please score the merged NDA <S> in terms of how much redundant information is contained, independent of the original NDAs, as well as how much information is retained from the original NDAs.
+A score of 10 for redundancy implies that absolutely no information is redundant, while a score of 0 implies that at least half of the information is redundant (so everything is at least mentioned twice).
+A score of 10 for retained information implies that all information from the original NDAs is retained, while a score of 0 implies that no information is retained.
+You may provide reasoning for your scoring, but the final score for redundancy should be between the tags <Redundancy> and </Redundancy>, and the final score for retained information should be between the tags <Retained> and </Retained>, without any additional text within any of those tags.
+
+Here are NDAs <Doc1> - <Doc4>:
+
+<Doc1>
+{doc1}
+</Doc1>
+
+<Doc2>
+{doc2}
+</Doc2>
+
+<Doc3>
+{doc3}
+</Doc3>
+
+<Doc4>
+{doc4}
+</Doc4>
+
+Here is the summary NDA <S>:
+<S>
+{s}
+</S>"""    
+
+def error_score_doc_merge(lm, current_answer, doc1, doc2, doc3, doc4):
+    current_prompt = SCORE_PROMPT.format(doc1 = doc1, doc2 = doc2, doc3 = doc3, doc4 = doc4, s=current_answer)
+    print(current_prompt)
+    num_errors = lm.get_response_texts(
+                lm.query(current_prompt, num_responses=3))
+
+    redundancy = []
+    retained = []
+    for error in num_errors:
+        redundancy.append(int(error[error.find("<Redundancy>"):error.find("</Redundancy>")].replace("<Redundancy>","").replace("</Redundancy>")))
+        retained.append(int(error[error.find("<Retained>"):error.find("</Retained>")].replace("<Retained>","").replace("</Retained>")))
+    return num_errors
     
+#6.5 9 8.5
