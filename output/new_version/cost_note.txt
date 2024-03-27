@@ -9,3 +9,5 @@ gpt3.5:
         - intersection 128: 2.55$
     keyword counting:
         - keyword counting: 1.13$
+    doc merge:
+        - doc merge: 2.53$

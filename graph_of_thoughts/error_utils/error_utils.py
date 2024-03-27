@@ -99,9 +99,9 @@ def error_score_keyword_counting(current_answer, correct_list):
 SCORE_PROMPT = """
 The following NDA <S> merges NDAs <Doc1> - <Doc4>.
 Please score the merged NDA <S> in terms of how much redundant information is contained, independent of the original NDAs, as well as how much information is retained from the original NDAs.
-A score of 10 for redundancy implies that absolutely no information is redundant, while a score of 0 implies that at least half of the information is redundant (so everything is at least mentioned twice).
-A score of 10 for retained information implies that all information from the original NDAs is retained, while a score of 0 implies that no information is retained.
-You may provide reasoning for your scoring, but the final score for redundancy should be between the tags <Redundancy> and </Redundancy>, and the final score for retained information should be between the tags <Retained> and </Retained>, without any additional text within any of those tags.
+A score of 10 for redundancy implies that absolutely no information is redundant, while a score of 0 implies that at least half of the information is redundant (so everything is at least mentioned twice). The higher the better.
+A score of 10 for retained information implies that all information from the original NDAs is retained, while a score of 0 implies that no information is retained. The higher the better.
+You may provide reasoning for your scoring, but the final score for redundancy should be between the tags <Redundancy> and </Redundancy>, and the final score for retained information should be between the tags <Retained> and </Retained>.
 
 Here are NDAs <Doc1> - <Doc4>:
 
@@ -128,20 +128,22 @@ Here is the summary NDA <S>:
 Example scoring:
 <Redundancy>score</Redundancy>
 <Retained>score</Retained>
-Reasoning ..."""    
+Reasoning for above scoring...
+
+Scoring:"""    
 
 def error_score_doc_merge(lm, current_answer, doc1, doc2, doc3, doc4):
     current_prompt = SCORE_PROMPT.format(doc1 = doc1, doc2 = doc2, doc3 = doc3, doc4 = doc4, s=current_answer)
     print(current_prompt)
     num_errors = lm.get_response_texts(
-                lm.query(current_prompt, num_responses=3))
+                lm.query(current_prompt, num_responses=3, system_prompt="You are a helpfull assistant."))
+    print("answer score:", num_errors)
 
     redundancy = []
     retained = []
     for error in num_errors:
         redundancy.append(int(error[error.find("<Redundancy>"):error.find("</Redundancy>")].replace("<Redundancy>","").replace("</Redundancy>","")))
         retained.append(int(error[error.find("<Retained>"):error.find("</Retained>")].replace("<Retained>","").replace("</Retained>", "")))
-    print(num_errors)
     num_errors = round(2/(1/(np.mean(retained)) + 1/(np.mean(redundancy))), 4)
     return num_errors
     
