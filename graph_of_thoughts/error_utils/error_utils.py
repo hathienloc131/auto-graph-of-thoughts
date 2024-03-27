@@ -1,5 +1,6 @@
 from collections import Counter
 import json
+import numpy as np
 def parse_list(str_list):
 
     start_list = str_list.find('[') if str_list.find('[') != -1 else 0
@@ -123,7 +124,11 @@ Here are NDAs <Doc1> - <Doc4>:
 Here is the summary NDA <S>:
 <S>
 {s}
-</S>"""    
+</S>
+Example scoring:
+<Redundancy>score</Redundancy>
+<Retained>score</Retained>
+Reasoning ..."""    
 
 def error_score_doc_merge(lm, current_answer, doc1, doc2, doc3, doc4):
     current_prompt = SCORE_PROMPT.format(doc1 = doc1, doc2 = doc2, doc3 = doc3, doc4 = doc4, s=current_answer)
@@ -134,8 +139,10 @@ def error_score_doc_merge(lm, current_answer, doc1, doc2, doc3, doc4):
     redundancy = []
     retained = []
     for error in num_errors:
-        redundancy.append(int(error[error.find("<Redundancy>"):error.find("</Redundancy>")].replace("<Redundancy>","").replace("</Redundancy>")))
-        retained.append(int(error[error.find("<Retained>"):error.find("</Retained>")].replace("<Retained>","").replace("</Retained>")))
+        redundancy.append(int(error[error.find("<Redundancy>"):error.find("</Redundancy>")].replace("<Redundancy>","").replace("</Redundancy>","")))
+        retained.append(int(error[error.find("<Retained>"):error.find("</Retained>")].replace("<Retained>","").replace("</Retained>", "")))
+    print(num_errors)
+    num_errors = round(2/(1/(np.mean(retained)) + 1/(np.mean(redundancy))), 4)
     return num_errors
     
 #6.5 9 8.5

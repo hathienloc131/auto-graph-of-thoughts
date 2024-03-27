@@ -25,9 +25,10 @@ def run(file_name: str, length: int):
     START_TOKEN = tokenizer(0)
     END_TOKEN = tokenizer(1)
 
-    sequence = [START_TOKEN, 7, 17, 24, END_TOKEN]
-    # sequence = [START_TOKEN, 2, 17, 24, END_TOKEN]
-    # sequence = [START_TOKEN, 17, END_TOKEN]
+    # sequence = [START_TOKEN, 7, 35, 60, END_TOKEN] # 128
+    sequence = [START_TOKEN, 4, 35, 60, END_TOKEN] # 64
+
+    # sequence = [START_TOKEN, 2, 35, 60, END_TOKEN] # 32
 
     error_score_list = []
     # graph.visualize()
