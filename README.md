@@ -6,8 +6,12 @@ Auto Graph of Thoughts (AutoGoT) which extends GoT by allowing LLMs to freely ge
 **Keywords:** LLM, Natural language processing, Prompting.
 
 ## Overview Architecture
-![system design](assets/current_got/Arch.png)\
-*Graph Architecture of AutoGoT*
+<p align="center">
+<img src="assets/current_got/Arch.png" />
+
+<i>Graph Architecture of AutoGoT</i>
+</p>
+
 
 ## License
 This project is licensed under the [MIT License](./LICENSE).
