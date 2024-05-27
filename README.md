@@ -1,4 +1,16 @@
-# **Graph of Thoughs Generator**
+# **💭Auto Graph of Thoughts: A Hands-free and Cost Effective Method for using Graph of Thoughts**
+
+## Introduction
+Auto Graph of Thoughts (AutoGoT) which extends GoT by allowing LLMs to freely generate prompts for each type of Thought and utilizes those prompts to generate output for each thought.
+
+**Keywords:** LLM, Natural language processing, Prompting.
+
+## Overview Architecture
+![system design](assets/current_got/Arch.png)
+*Graph Architecture of AutoGoT*
+
+## License
+This project is licensed under the [MIT License](./LICENSE).
 
 ## Configurations
 
